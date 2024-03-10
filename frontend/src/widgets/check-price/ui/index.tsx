@@ -19,7 +19,7 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
+  FormLabel
 } from '@/shared/ui/ui/form'
 import { Separator } from '@/shared/ui/ui/separator'
 
@@ -49,9 +49,8 @@ export function CheckPriceCard({ className, ...props }: CheckPriceProps) {
         <CardTitle>Проверить цену</CardTitle>
         <CardDescription>
           Укажите локацию и категорию чтобы проверить цену для нее. Вы так же
-          можете указать рекламный сегменент, либо оставить его пустым.
-          <Separator orientation="horizontal" className="my-2 w-full" />
-          Перед тем, как изменять цену, нужно ее сначала проверить.
+          можете указать рекламный сегменент, либо оставить его пустым. Перед
+          тем, как изменять цену, нужно ее сначала проверить.
         </CardDescription>
       </CardHeader>
       <CardContent>
