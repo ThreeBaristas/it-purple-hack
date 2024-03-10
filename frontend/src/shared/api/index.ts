@@ -1,3 +1,3 @@
-import { GetCategories } from './get-categories'
+import { getCategories } from './get-categories'
 
-export { GetCategories }
+export { getCategories }

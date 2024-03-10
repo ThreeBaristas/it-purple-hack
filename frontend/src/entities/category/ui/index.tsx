@@ -1,4 +1,5 @@
-import { ChevronsUpDown } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { CheckIcon, ChevronsUpDown } from 'lucide-react'
 import React from 'react'
 
 import { cn } from '@/shared/lib'
@@ -8,20 +9,21 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
+  CommandLoading,
   PopoverContent,
   PopoverTrigger
 } from '@/shared/ui'
 import { Button, Popover } from '@/shared/ui'
 
+import { getCategoriesQueryOptions } from '../api'
 import { Category } from '../model'
 
 type Props = Omit<
   React.ComponentPropsWithoutRef<typeof Button>,
   'value' | 'onChange'
 > & {
-  value: number | undefined
-  onChange: (value: number | undefined) => void
+  value: Category | undefined
+  onChange: (value: Category | undefined) => void
 }
 
 export function SelectCategory({
@@ -32,12 +34,10 @@ export function SelectCategory({
 }: Props) {
   const [open, setOpen] = React.useState(false)
   const [searchValue, setSearchValue] = React.useState('')
-  const categories: Array<Category> = [
-    {
-      id: 1,
-      name: 'test category'
-    }
-  ]
+  const { data: categories, isLoading } = useQuery(
+    getCategoriesQueryOptions(searchValue)
+  )
+  console.log(categories)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -49,31 +49,37 @@ export function SelectCategory({
           className={cn('w-[200px] justify-between', className)}
           {...props}
         >
-          {value
-            ? categories.find((category) => category.id === value)?.name
-            : 'Выберите категорию'}
+          {value ? value.name : 'Выберите категорию'}
           <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
-        <Command>
+        <Command shouldFilter={false}>
           <CommandInput
             placeholder="Выберите категорию"
             value={searchValue}
             onValueChange={setSearchValue}
           />
-          <CommandEmpty>Не найдено</CommandEmpty>
-          <CommandList>
-            <CommandGroup>
-              {categories.map((category) => (
+          <CommandGroup>
+            {isLoading && <CommandLoading>Загрузка</CommandLoading>}
+            {!isLoading && <CommandEmpty>Не найдено</CommandEmpty>}
+            {categories &&
+              categories.map((category) => (
                 <CommandItem
-                  value={category.name}
                   key={category.id}
-                  onSelect={() => onChange(category.id)}
-                />
+                  value={String(category.id)}
+                  onSelect={() => onChange(category)}
+                >
+                  {category.name}
+                  <CheckIcon
+                    className={cn(
+                      'ml-auto h-4 w-4',
+                      value?.id === category.id ? 'opacity-100' : 'opacity-0'
+                    )}
+                  />
+                </CommandItem>
               ))}
-            </CommandGroup>
-          </CommandList>
+          </CommandGroup>
         </Command>
       </PopoverContent>
     </Popover>
