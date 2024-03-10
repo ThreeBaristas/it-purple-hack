@@ -1,14 +1,17 @@
 package main
 
 import (
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
+	"threebaristas.com/purple/pkg/middleware"
 	"threebaristas.com/purple/pkg/routes"
 )
 
 func main()  {
   logger, _ := zap.NewProduction();
   app := fiber.New()
+
+  middleware.SwaggerMiddleware(app)
 
   routes.AdminPanelRoutes(app)
 
