@@ -31,7 +31,8 @@ module.exports = {
     'plugin:prettier/recommended',
     'plugin:react/jsx-runtime',
     'plugin:react-hooks/recommended',
-    'plugin:tailwindcss/recommended'
+    'plugin:tailwindcss/recommended',
+    'plugin:@tanstack/eslint-plugin-query/recommended',
   ],
   rules: {
     'react-hooks/rules-of-hooks': 'error',
