@@ -1,5 +1,6 @@
 import { valibotResolver } from '@hookform/resolvers/valibot'
-import { Output, number, object, string } from 'valibot'
+import { useForm } from 'react-hook-form'
+import { number, object, Output, string } from 'valibot'
 
 import { SelectCategory } from '@/entities/category'
 import { SelectLocation } from '@/entities/location'
@@ -13,16 +14,13 @@ import {
   CardHeader,
   CardTitle
 } from '@/shared/ui'
-import { useForm } from 'react-hook-form'
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
 } from '@/shared/ui/ui/form'
-import { Smile } from 'lucide-react'
 import { Separator } from '@/shared/ui/ui/separator'
 
 type CheckPriceProps = React.HTMLAttributes<HTMLDivElement>
