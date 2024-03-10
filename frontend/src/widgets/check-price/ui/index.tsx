@@ -24,7 +24,7 @@ export function CheckPriceCard({ className, ...props }: CheckPriceProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className='space-y-4'>
+        <form className="space-y-4">
           <SelectCategory
             value={undefined}
             onChange={console.log}

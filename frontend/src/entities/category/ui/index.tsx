@@ -31,6 +31,7 @@ export function SelectCategory({
   ...props
 }: Props) {
   const [open, setOpen] = React.useState(false)
+  const [searchValue, setSearchValue] = React.useState('')
   const categories: Array<Category> = [
     {
       id: 1,
@@ -56,7 +57,11 @@ export function SelectCategory({
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Выберите категорию" />
+          <CommandInput
+            placeholder="Выберите категорию"
+            value={searchValue}
+            onValueChange={setSearchValue}
+          />
           <CommandEmpty>Не найдено</CommandEmpty>
           <CommandList>
             <CommandGroup>
