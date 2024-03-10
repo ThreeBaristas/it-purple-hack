@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { CheckIcon, ChevronsUpDown } from 'lucide-react'
 import React from 'react'
+import { useDebounce } from 'use-debounce'
 
 import { cn } from '@/shared/lib'
 import {
@@ -34,11 +35,10 @@ export function SelectCategory({
 }: Props) {
   const [open, setOpen] = React.useState(false)
   const [searchValue, setSearchValue] = React.useState('')
+  const [debouncedSearchValue] = useDebounce(searchValue, 500)
   const { data: categories, isLoading } = useQuery(
-    getCategoriesQueryOptions(searchValue)
+    getCategoriesQueryOptions(debouncedSearchValue)
   )
-  console.log(categories)
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>

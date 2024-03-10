@@ -27,7 +27,6 @@ export async function getCategories(query?: string): Promise<Response> {
       name: 'Транспорт'
     }
   ]
-  console.log(data)
   return data.filter((it) =>
     it.name.toLowerCase().includes(query?.toLocaleLowerCase() ?? '')
   )
