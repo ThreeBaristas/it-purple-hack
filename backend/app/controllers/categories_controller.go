@@ -15,6 +15,11 @@ func NewCategoriesController(categoriesRepo repository.CategoriesRepository) *Ca
 	return &CategoriesController{CategoriesRepo: categoriesRepo}
 }
 
+type CategoryDTO struct  {
+	ID       int64  `json:"id"`
+	Name     string `json:"name"`
+}
+
 // GetCategoryByID func gets a category by id
 //
 //	@Tags		admin
@@ -39,4 +44,27 @@ func (c *CategoriesController) GetCategoryByID(ctx *fiber.Ctx) error {
 		"id":   category.ID,
 		"name": category.Name,
 	})
+}
+
+func (c *CategoriesController) GetCategoriesBySearch(ctx *fiber.Ctx) error {
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
+ 
+  search := ctx.Query("search")
+
+  data, err := c.CategoriesRepo.GetByString(search, 10)
+	if err != nil {
+		ctx.Status(fiber.StatusInternalServerError)
+		return ctx.SendString("Error!" + err.Error())
+	}
+
+  var dtos []*CategoryDTO
+  for _, category := range data {
+    dtos = append(dtos, &CategoryDTO{
+      ID: category.ID,
+      Name: category.Name,
+    })
+  }
+
+  return ctx.JSON(dtos)
 }
