@@ -1,23 +1,31 @@
 package repository
 
 import (
+	"errors"
+
 	"threebaristas.com/purple/app/models"
 )
 
 type CategoriesRepositoryImpl struct {
-	CategoryList models.CategoryList
+	CategoryList []*models.Category
 }
 
 func NewCategoriesRepositoryImpl() *CategoriesRepositoryImpl {
 	return &CategoriesRepositoryImpl{
-		CategoryList: *models.GetCategoryListExample(),
+		CategoryList: models.GetCategoryListExample(),
 	}
 }
 
 func (r *CategoriesRepositoryImpl) GetCategoryByID(id int64) (*models.Category, error) {
-	category, err := r.CategoryList.GetCategoryByID(id)
-	if err != nil {
-		return nil, err
-	}
-	return category, nil
+  list := r.CategoryList
+  for _, category := range list {
+    println(category.ID, category.Name)
+  }
+  for _, category := range list {
+    println(category.ID, category.Name)
+    if category.ID == id {
+      return category, nil
+    }
+  }
+  return nil, errors.New("Not found")
 }

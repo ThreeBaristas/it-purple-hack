@@ -1,63 +1,55 @@
 package models
 
-import (
-	"errors"
-	"fmt"
-)
-
 // Category представляет структуру для хранения информации о категории
 type Category struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
+  Parent *Category
+  Children []*Category
 }
 
-// CategoryList представляет список категорий
-type CategoryList struct {
-	categories []*Category
+func emptyCategory(id int64, name string, parent *Category) Category {
+  return Category {
+    ID: id,
+    Name: name,
+    Parent: parent,
+    Children: nil,
+  }
 }
 
-// newCategoryList создает новый пустой список категорий
-func newCategoryList() *CategoryList {
-	return &CategoryList{}
+// Creates a new category and adds it to given node.
+// Returns a newly created node
+func (c *Category) addChild(id int64, name string) *Category {
+  newCategory := Category {
+    ID: id,
+    Name: name,
+    Parent: c,
+    Children: nil,
+  }
+  c.Children = append(c.Children, &newCategory)
+  return &newCategory
 }
 
-// addCategory добавляет новую категорию в список
-func (cl *CategoryList) addCategory(id int64, name string) {
-	category := &Category{
-		ID:   id,
-		Name: name,
-	}
-	cl.categories = append(cl.categories, category)
-}
-
-// printCategories выводит информацию о всех категориях в списке
-func (cl *CategoryList) printCategories() {
-	fmt.Println("Categories:")
-	for _, category := range cl.categories {
-		fmt.Printf("ID: %d, Name: %s\n", category.ID, category.Name)
-	}
-}
-
-// GetCategoryByID ищет категорию по заданному ID и возвращает ее, если она найдена
-func (cl *CategoryList) GetCategoryByID(id int64) (*Category, error) {
-	for _, category := range cl.categories {
-		if category.ID == id {
-			return category, nil
-		}
-	}
-	return nil, errors.New("category not found")
+func (c *Category) traverse() []*Category {
+  if(len(c.Children) == 0) {
+    return []*Category{c}
+  }
+  var result []*Category;
+  for _, child := range c.Children {
+    result = append(result, child.traverse()...)
+  }
+  result = append(result, c)
+  return result
 }
 
 // FOR EXAMPLE
-func GetCategoryListExample() *CategoryList {
+func GetCategoryListExample() []*Category {
 	// Создаем новый пустой список категорий
-	cl := newCategoryList()
-
-	// Добавляем категории в список
-	cl.addCategory(1, "Личные вещи")
-	cl.addCategory(2, "Электроника")
-	cl.addCategory(3, "Дом и сад")
-	// и т.д. добавляем другие категории по мере необходимости
-
-	return cl
+	root := emptyCategory(1, "ROOT", nil)
+  electronics := root.addChild(2, "Бытовая электроника")
+  electronics.addChild(3, "Товары для компьютера")
+  electronics.addChild(4, "Фототехника")
+  electronics.addChild(8, "Ноутбуки")
+  
+  return root.traverse()
 }
