@@ -14,6 +14,7 @@ func main() {
 	middleware.SwaggerMiddleware(app)
 
 	routes.AdminPanelRoutes(app)
+	routes.CategoriesRoutes(app)
 
 	logger.Info("Starting web server")
 	app.Listen(":3000")
