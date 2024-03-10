@@ -1,3 +1,6 @@
+import { valibotResolver } from '@hookform/resolvers/valibot'
+import { Output, number, object, string } from 'valibot'
+
 import { SelectCategory } from '@/entities/category'
 import { SelectLocation } from '@/entities/location'
 import { cn } from '@/shared/lib'
@@ -10,10 +13,36 @@ import {
   CardHeader,
   CardTitle
 } from '@/shared/ui'
+import { useForm } from 'react-hook-form'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/shared/ui/ui/form'
 
 type CheckPriceProps = React.HTMLAttributes<HTMLDivElement>
 
 export function CheckPriceCard({ className, ...props }: CheckPriceProps) {
+  const locationSchema = object({
+    id: number(),
+    name: string()
+  })
+  const schema = object({
+    location: locationSchema,
+    category: locationSchema
+  })
+  const form = useForm<Output<typeof schema>>({
+    resolver: valibotResolver(schema),
+    defaultValues: {}
+  })
+
+  function handleSubmit(values: Output<typeof schema>) {
+    console.log(values)
+  }
+
   return (
     <Card className={cn('mx-auto max-w-md', className)} {...props}>
       <CardHeader>
@@ -24,21 +53,43 @@ export function CheckPriceCard({ className, ...props }: CheckPriceProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-4">
-          <SelectCategory
-            value={undefined}
-            onChange={console.log}
-            className="w-full"
-          />
-          <SelectLocation
-            value={undefined}
-            onChange={console.log}
-            className="w-full"
-          />
-        </form>
+        <Form {...form}>
+          <form
+            className="space-y-4"
+            id="check-price-form"
+            onSubmit={form.handleSubmit(handleSubmit)}
+          >
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Категория</FormLabel>
+                  <FormControl>
+                    <SelectCategory {...field} className="w-full" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Локация</FormLabel>
+                  <FormControl>
+                    <SelectLocation {...field} className="w-full" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
       </CardContent>
       <CardFooter>
-        <Button>Отправить</Button>
+        <Button type="submit" form="check-price-form">
+          Отправить
+        </Button>
       </CardFooter>
     </Card>
   )

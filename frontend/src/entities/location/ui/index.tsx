@@ -27,12 +27,10 @@ type Props = Omit<
   onChange: (value: Location | undefined) => void
 }
 
-export function SelectLocation({
-  className,
-  value,
-  onChange,
-  ...props
-}: Props) {
+const SelectLocation = React.forwardRef<
+  React.ComponentRef<typeof Button>,
+  Props
+>(({ className, value, onChange, ...props }, ref) => {
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
   const [query] = useDebounce(search, 500)
@@ -49,6 +47,7 @@ export function SelectLocation({
           aria-expanded={open}
           className={cn('w-[200px] justify-between', className)}
           {...props}
+          ref={ref}
         >
           {value ? value.name : 'Выберите локацию'}
           <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
@@ -85,4 +84,7 @@ export function SelectLocation({
       </PopoverContent>
     </Popover>
   )
-}
+})
+SelectLocation.displayName = 'SelectLocation'
+
+export { SelectLocation }
