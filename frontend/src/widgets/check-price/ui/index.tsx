@@ -1,4 +1,5 @@
 import { SelectCategory } from '@/entities/category'
+import { SelectLocation } from '@/entities/location'
 import { cn } from '@/shared/lib'
 import {
   Button,
@@ -18,13 +19,18 @@ export function CheckPriceCard({ className, ...props }: CheckPriceProps) {
       <CardHeader>
         <CardTitle>Проверить цену</CardTitle>
         <CardDescription>
-          Укажите локацию и категорию чтобы проверить цену для нее. Вы так же Вы
-          так же можете указать рекламный сегменент, либо оставить его пустым.
+          Укажите локацию и категорию чтобы проверить цену для нее. Вы так же
+          можете указать рекламный сегменент, либо оставить его пустым.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form className='space-y-4'>
           <SelectCategory
+            value={undefined}
+            onChange={console.log}
+            className="w-full"
+          />
+          <SelectLocation
             value={undefined}
             onChange={console.log}
             className="w-full"
