@@ -1,5 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
+import { RouterProvider } from './router'
+
 type Props = {
   queryClient: QueryClient
 }
@@ -7,7 +9,7 @@ type Props = {
 export function Providers({ queryClient }: Props) {
   return (
     <QueryClientProvider client={queryClient}>
-      <h1 className="text-purple-600">Hello</h1>
+      <RouterProvider />
     </QueryClientProvider>
   )
 }
