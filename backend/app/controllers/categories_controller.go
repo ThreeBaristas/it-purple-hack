@@ -36,7 +36,7 @@ func (c *CategoriesController) GetCategoryByID(ctx *fiber.Ctx) error {
 		return ctx.SendString("Error! Failed to get category")
 	}
 	return ctx.JSON(fiber.Map{
-    "id": category.ID,
-    "name": category.Name,
-  })
+		"id":   category.ID,
+		"name": category.Name,
+	})
 }
