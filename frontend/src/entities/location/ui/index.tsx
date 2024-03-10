@@ -1,5 +1,7 @@
-import { ChevronsUpDown } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { CheckIcon, ChevronsUpDown } from 'lucide-react'
 import React from 'react'
+import { useDebounce } from 'use-debounce'
 
 import { cn } from '@/shared/lib'
 import {
@@ -8,35 +10,33 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
+  CommandLoading,
   PopoverContent,
   PopoverTrigger
 } from '@/shared/ui'
 import { Button, Popover } from '@/shared/ui'
 
+import { getLocationsQueryOptions } from '../api'
 import { Location } from '../model'
 
 type Props = Omit<
   React.ComponentPropsWithoutRef<typeof Button>,
   'value' | 'onChange'
 > & {
-  value: number | undefined
-  onChange: (value: number | undefined) => void
+  value: Location | undefined
+  onChange: (value: Location | undefined) => void
 }
 
-export function SelectLocation({
-  className,
-  value,
-  onChange,
-  ...props
-}: Props) {
+const SelectLocation = React.forwardRef<
+  React.ComponentRef<typeof Button>,
+  Props
+>(({ className, value, onChange, ...props }, ref) => {
   const [open, setOpen] = React.useState(false)
-  const categories: Array<Location> = [
-    {
-      id: 1,
-      name: 'test location'
-    }
-  ]
+  const [search, setSearch] = React.useState('')
+  const [query] = useDebounce(search, 500)
+  const { data: locations, isLoading } = useQuery(
+    getLocationsQueryOptions(query)
+  )
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -47,30 +47,44 @@ export function SelectLocation({
           aria-expanded={open}
           className={cn('w-[200px] justify-between', className)}
           {...props}
+          ref={ref}
         >
-          {value
-            ? categories.find((category) => category.id === value)?.name
-            : 'Выберите локацию'}
+          {value ? value.name : 'Выберите локацию'}
           <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Выберите локацию" />
-          <CommandEmpty>Не найдено</CommandEmpty>
-          <CommandList>
-            <CommandGroup>
-              {categories.map((category) => (
+        <Command shouldFilter={false}>
+          <CommandInput
+            placeholder="Выберите локацию"
+            value={search}
+            onValueChange={setSearch}
+          />
+          <CommandGroup>
+            {isLoading && <CommandLoading>Загрузка</CommandLoading>}
+            {!isLoading && <CommandEmpty>Не найдено</CommandEmpty>}
+            {locations &&
+              locations.map((location) => (
                 <CommandItem
-                  value={category.name}
-                  key={category.id}
-                  onSelect={() => onChange(category.id)}
-                />
+                  key={location.id}
+                  value={String(location.id)}
+                  onSelect={() => onChange(location)}
+                >
+                  {location.name}
+                  <CheckIcon
+                    className={cn(
+                      'ml-auto h-4 w-4',
+                      value?.id === location.id ? 'opacity-100' : 'opacity-0'
+                    )}
+                  />
+                </CommandItem>
               ))}
-            </CommandGroup>
-          </CommandList>
+          </CommandGroup>
         </Command>
       </PopoverContent>
     </Popover>
   )
-}
+})
+SelectLocation.displayName = 'SelectLocation'
+
+export { SelectLocation }

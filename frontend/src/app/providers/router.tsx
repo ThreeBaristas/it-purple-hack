@@ -1,27 +1,12 @@
-import { QueryClient } from '@tanstack/react-query'
 import {
-  createRootRouteWithContext,
-  createRoute,
   createRouter,
   RouterProvider as TanstackRouterProvider
 } from '@tanstack/react-router'
 
-import { Layout } from '@/pages/layout'
+import { routeTree } from '@/pages/root'
 
-import { AdminPageComponent } from '../../pages/admin'
 import { client } from './query'
 
-const rootRoute = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  component: Layout
-})
-
-const indexRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  component: AdminPageComponent,
-  path: '/'
-})
-
-const routeTree = rootRoute.addChildren([indexRoute])
 
 const router = createRouter({
   routeTree,

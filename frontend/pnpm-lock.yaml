@@ -5,12 +5,21 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@hookform/resolvers':
+    specifier: ^3.3.4
+    version: 3.3.4(react-hook-form@7.51.0)
   '@radix-ui/react-dialog':
     specifier: ^1.0.5
     version: 1.0.5(@types/react-dom@18.2.21)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0)
+  '@radix-ui/react-label':
+    specifier: ^2.0.2
+    version: 2.0.2(@types/react-dom@18.2.21)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0)
   '@radix-ui/react-popover':
     specifier: ^1.0.7
     version: 1.0.7(@types/react-dom@18.2.21)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0)
+  '@radix-ui/react-separator':
+    specifier: ^1.0.3
+    version: 1.0.3(@types/react-dom@18.2.21)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0)
   '@radix-ui/react-slot':
     specifier: ^1.0.2
     version: 1.0.2(@types/react@18.2.64)(react@18.2.0)
@@ -38,6 +47,9 @@ dependencies:
   lucide-react:
     specifier: ^0.354.0
     version: 0.354.0(react@18.2.0)
+  qs:
+    specifier: ^6.12.0
+    version: 6.12.0
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -57,8 +69,8 @@ dependencies:
     specifier: ^10.0.0
     version: 10.0.0(react@18.2.0)
   valibot:
-    specifier: ^0.30.0
-    version: 0.30.0
+    specifier: ^0.24.1
+    version: 0.24.1
 
 devDependencies:
   '@nabla/vite-plugin-eslint':
@@ -70,6 +82,9 @@ devDependencies:
   '@types/node':
     specifier: ^18.15.3
     version: 18.19.22
+  '@types/qs':
+    specifier: ^6.9.12
+    version: 6.9.12
   '@types/react':
     specifier: ^18.0.28
     version: 18.2.64
@@ -614,6 +629,14 @@ packages:
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
     dev: false
 
+  /@hookform/resolvers@3.3.4(react-hook-form@7.51.0):
+    resolution: {integrity: sha512-o5cgpGOuJYrd+iMKvkttOclgwRW86EsWJZZRC23prf0uU2i48Htq4PuT73AVb9ionFyZrwYEITuOFGF+BydEtQ==}
+    peerDependencies:
+      react-hook-form: ^7.0.0
+    dependencies:
+      react-hook-form: 7.51.0(react@18.2.0)
+    dev: false
+
   /@humanwhocodes/config-array@0.11.14:
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
     engines: {node: '>=10.10.0'}
@@ -872,6 +895,27 @@ packages:
       react: 18.2.0
     dev: false
 
+  /@radix-ui/react-label@2.0.2(@types/react-dom@18.2.21)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-N5ehvlM7qoTLx7nWPodsPYPgMzA5WM8zZChQg8nyFJKnDO5WHdba1vv5/H6IO5LtJMfD2Q3wh1qHFGNtK0w3bQ==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.24.0
+      '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.21)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0)
+      '@types/react': 18.2.64
+      '@types/react-dom': 18.2.21
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
   /@radix-ui/react-popover@1.0.7(@types/react-dom@18.2.21)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-shtvVnlsxT6faMnK/a7n0wptwBD23xc1Z5mdrtKLwVEfsEMXodS0r5s0/g5P0hX//EKYZS2sxUjqfzlg52ZSnQ==}
     peerDependencies:
@@ -995,6 +1039,27 @@ packages:
     dependencies:
       '@babel/runtime': 7.24.0
       '@radix-ui/react-slot': 1.0.2(@types/react@18.2.64)(react@18.2.0)
+      '@types/react': 18.2.64
+      '@types/react-dom': 18.2.21
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@radix-ui/react-separator@1.0.3(@types/react-dom@18.2.21)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-itYmTy/kokS21aiV5+Z56MZB54KrhPgn6eHDKkFeOLR34HMN2s8PaN47qZZAGnvupcjxHaFZnW4pQEh0BvvVuw==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.24.0
+      '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.21)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.64
       '@types/react-dom': 18.2.21
       react: 18.2.0
@@ -1473,6 +1538,10 @@ packages:
   /@types/prop-types@15.7.11:
     resolution: {integrity: sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==}
 
+  /@types/qs@6.9.12:
+    resolution: {integrity: sha512-bZcOkJ6uWrL0Qb2NAWKa7TBU+mJHPzhx9jjLL1KHF+XpzEcR7EXHvjbHlGtR/IsP1vyPrehuS6XqkmaePy//mg==}
+    dev: true
+
   /@types/react-dom@18.2.21:
     resolution: {integrity: sha512-gnvBA/21SA4xxqNXEwNiVcP0xSGHh/gi1VhWv9Bl46a0ItbTT5nFY+G9VSQpaG/8N/qdJpJ+vftQ4zflTtnjLw==}
     dependencies:
@@ -1947,7 +2016,6 @@ packages:
       function-bind: 1.1.2
       get-intrinsic: 1.2.4
       set-function-length: 1.2.2
-    dev: true
 
   /callsites@3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
@@ -2122,7 +2190,6 @@ packages:
       es-define-property: 1.0.0
       es-errors: 1.3.0
       gopd: 1.0.1
-    dev: true
 
   /define-properties@1.2.1:
     resolution: {integrity: sha512-8QmQKqEASLd5nx0U1B1okLElbUuuttJ/AnYmRXbbbGDWh6uS208EjD4Xqq/I9wK7u0v6O08XhTWnt5XtEbR6Dg==}
@@ -2252,12 +2319,10 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       get-intrinsic: 1.2.4
-    dev: true
 
   /es-errors@1.3.0:
     resolution: {integrity: sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw==}
     engines: {node: '>= 0.4'}
-    dev: true
 
   /es-iterator-helpers@1.0.17:
     resolution: {integrity: sha512-lh7BsUqelv4KUbR5a/ZTaGGIMLCjPGPqJ6q+Oq24YP0RdyptX1uzm4vvaqzk7Zx3bpl/76YLTTDj9L7uYQ92oQ==}
@@ -2683,7 +2748,6 @@ packages:
       has-proto: 1.0.3
       has-symbols: 1.0.3
       hasown: 2.0.1
-    dev: true
 
   /get-nonce@1.0.1:
     resolution: {integrity: sha512-FJhYRoDaiatfEkUK8HKlicmu/3SGFD51q3itKDGoSTysQJBnfOcxU5GxnhE1E6soB76MbT0MBtnKJuXyAx+96Q==}
@@ -2772,7 +2836,6 @@ packages:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
     dependencies:
       get-intrinsic: 1.2.4
-    dev: true
 
   /graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
@@ -2796,17 +2859,14 @@ packages:
     resolution: {integrity: sha512-55JNKuIW+vq4Ke1BjOTjM2YctQIvCT7GFzHwmfZPGo5wnrgkid0YQtnAleFSqumZm4az3n2BS+erby5ipJdgrg==}
     dependencies:
       es-define-property: 1.0.0
-    dev: true
 
   /has-proto@1.0.3:
     resolution: {integrity: sha512-SJ1amZAJUiZS+PhsVLf5tGydlaVB8EdFpaSO4gmiUKUOxk8qzn5AIy4ZeJUmh22znIdk/uMAUT2pl3FxzVUH+Q==}
     engines: {node: '>= 0.4'}
-    dev: true
 
   /has-symbols@1.0.3:
     resolution: {integrity: sha512-l3LCuF6MgDNwTDKkdYGEihYjt5pRPbEg46rtlmnSPlUbgmB8LOIrKJbYYFBSbnPaJexMKtiPO8hmeRjRz2Td+A==}
     engines: {node: '>= 0.4'}
-    dev: true
 
   /has-tostringtag@1.0.2:
     resolution: {integrity: sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==}
@@ -3277,7 +3337,6 @@ packages:
 
   /object-inspect@1.13.1:
     resolution: {integrity: sha512-5qoj1RUiKOMsCCNLV1CBiPYE10sziTsnmNxkAI/rZhiD63CF7IqdFGC/XzjWjpSgLf0LxXX3bDFIh0E18f6UhQ==}
-    dev: true
 
   /object-keys@1.1.1:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
@@ -3576,6 +3635,13 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  /qs@6.12.0:
+    resolution: {integrity: sha512-trVZiI6RMOkO476zLGaBIzszOdFPnCCXHPG9kn0yuS1uz6xdVxPfZdB3vUig9pxPFDM9BRAgz/YUIVQ1/vuiUg==}
+    engines: {node: '>=0.6'}
+    dependencies:
+      side-channel: 1.0.6
+    dev: false
+
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
@@ -3793,7 +3859,6 @@ packages:
       get-intrinsic: 1.2.4
       gopd: 1.0.1
       has-property-descriptors: 1.0.2
-    dev: true
 
   /set-function-name@2.0.2:
     resolution: {integrity: sha512-7PGFlmtwsEADb0WYyvCMa1t+yke6daIG4Wirafur5kcf+MhUnPms1UeR0CKQdTZD81yESwMHbtn+TR+dMviakQ==}
@@ -3823,7 +3888,6 @@ packages:
       es-errors: 1.3.0
       get-intrinsic: 1.2.4
       object-inspect: 1.13.1
-    dev: true
 
   /signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
@@ -4215,8 +4279,8 @@ packages:
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  /valibot@0.30.0:
-    resolution: {integrity: sha512-5POBdbSkM+3nvJ6ZlyQHsggisfRtyT4tVTo1EIIShs6qCdXJnyWU5TJ68vr8iTg5zpOLjXLRiBqNx+9zwZz/rA==}
+  /valibot@0.24.1:
+    resolution: {integrity: sha512-Toclbuy20XsECZiueh2dkQ63he2AGaBIj/FJRDAFti2kueFldm9bjJzSYvPaL5CE1HXDMRhq7olak8at7xCz5A==}
     dev: false
 
   /vite-plugin-svgr@3.3.0(typescript@5.4.2)(vite@4.5.2):
