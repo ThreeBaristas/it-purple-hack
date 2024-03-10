@@ -22,6 +22,8 @@ import {
   FormLabel,
   FormMessage
 } from '@/shared/ui/ui/form'
+import { Smile } from 'lucide-react'
+import { Separator } from '@/shared/ui/ui/separator'
 
 type CheckPriceProps = React.HTMLAttributes<HTMLDivElement>
 
@@ -50,6 +52,8 @@ export function CheckPriceCard({ className, ...props }: CheckPriceProps) {
         <CardDescription>
           Укажите локацию и категорию чтобы проверить цену для нее. Вы так же
           можете указать рекламный сегменент, либо оставить его пустым.
+          <Separator orientation="horizontal" className="my-2 w-full" />
+          Перед тем, как изменять цену, нужно ее сначала проверить.
         </CardDescription>
       </CardHeader>
       <CardContent>
