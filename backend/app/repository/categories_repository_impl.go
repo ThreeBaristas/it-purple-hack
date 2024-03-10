@@ -5,19 +5,19 @@ import (
 )
 
 type CategoriesRepositoryImpl struct {
+	CategoryList models.CategoryList
 }
 
 func NewCategoriesRepositoryImpl() *CategoriesRepositoryImpl {
-	return &CategoriesRepositoryImpl{}
+	return &CategoriesRepositoryImpl{
+		CategoryList: *models.GetCategoryListExample(),
+	}
 }
 
 func (r *CategoriesRepositoryImpl) GetCategoryByID(id int64) (*models.Category, error) {
-
-	//For Ex.
-	category := &models.Category{
-		ID:   1,
-		Name: "Личные вещи",
+	category, err := r.CategoryList.GetCategoryByID(id)
+	if err != nil {
+		return nil, err
 	}
-
 	return category, nil
 }
