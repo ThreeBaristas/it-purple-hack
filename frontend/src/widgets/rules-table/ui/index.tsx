@@ -8,6 +8,8 @@ import {
 } from '@/shared/ui/table'
 
 import { Rule } from '../model'
+import { Button } from '@/shared/ui'
+import { Eye } from 'lucide-react'
 
 export function RulesTable({ rows }: { rows: Rule[] }) {
   return (
@@ -38,9 +40,18 @@ function RuleRow({ rule }: { rule: Rule }) {
     <TableRow>
       <TableCell>{rule.location.name}</TableCell>
       <TableCell>{rule.category.name}</TableCell>
-      <TableCell>{rule.segment}</TableCell>
-      <TableCell>{rule.price}</TableCell>
-      <TableCell></TableCell>
+      <TableCell>{rule.segment ? rule.segment : 'Baseline'}</TableCell>
+      <TableCell>
+        {new Intl.NumberFormat('ru', {
+          style: 'currency',
+          currency: 'RUB'
+        }).format(rule.price)}
+      </TableCell>
+      <TableCell>
+        <Button variant="outline" size="icon">
+          <Eye className="size-6" />
+        </Button>
+      </TableCell>
     </TableRow>
   )
 }
