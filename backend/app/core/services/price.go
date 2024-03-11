@@ -24,8 +24,11 @@ func NewPriceService(
 	}
 }
 
-func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds []int64) (*repository.GetPriceResponse, error) {
+func (a *PriceService) SetPrice(locationId int64, categoryId int64, segmentsId int64, price int64) (*repository.GetPriceResponse, error) {
+  return (*a.priceRepo).SetPrice(locationId, categoryId, segmentsId, price)
+}
 
+func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds []int64) (*repository.GetPriceResponse, error) {
 	location, _ := (*a.locationsRepo).GetLocationByID(locationId)
 	if location == nil {
 		return nil, errors.New("Location not found")

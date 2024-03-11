@@ -21,6 +21,7 @@ type GetPriceResponse struct {
 
 type PriceRepository interface {
 	GetPricesBatch(nodes *GetPriceRequest) ([]GetPriceResponse, error)
+  SetPrice(locationId int64, categoryId int64, segmentId int64, price int64) (*GetPriceResponse, error)
 }
 
 type PostgresPriceRepository struct {
@@ -57,4 +58,17 @@ func (r *PostgresPriceRepository) GetPricesBatch(req *GetPriceRequest) ([]GetPri
 		ans = append(ans, cur)
 	}
 	return ans, nil
+}
+
+func(r *PostgresPriceRepository) SetPrice(locationId int64, categoryId int64, segmentId int64, price int64) (*GetPriceResponse, error) {
+  _, err := r.db.Exec("INSERT INTO prices (location_id, category_id, matrix_id, price) VALUES ($1, $2, $3, $4) ON CONFLICT (category_id, location_id, matrix_id) DO UPDATE SET price = $4", locationId, categoryId, segmentId, price)
+  if err != nil {
+    return nil, err;
+  }
+  return &GetPriceResponse{
+    LocationId: locationId,
+    CategoryId: categoryId,
+    MatrixId: segmentId,
+    Price: price,
+  }, nil
 }
