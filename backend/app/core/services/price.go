@@ -28,6 +28,10 @@ func (a *PriceService) SetPrice(locationId int64, categoryId int64, segmentsId i
   return (*a.priceRepo).SetPrice(locationId, categoryId, segmentsId, price)
 }
 
+func (a *PriceService) DeletePrice(locationId int64, categoryId int64, segmentId int64) (bool, error) {
+  return (*a.priceRepo).DeletePrice(locationId, categoryId, segmentId)
+}
+
 func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds []int64) (*repository.GetPriceResponse, error) {
 	location, _ := (*a.locationsRepo).GetLocationByID(locationId)
 	if location == nil {
