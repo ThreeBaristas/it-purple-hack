@@ -1,30 +1,31 @@
 package controllers
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
-	"strconv"
 	"threebaristas.com/purple/app/repository"
 )
 
-type CategoriesController struct {
-	CategoriesRepo repository.CategoriesRepository
+type LocationsController struct {
+	Repo repository.LocationsRepository
 }
 
-func NewCategoriesController(categoriesRepo repository.CategoriesRepository) *CategoriesController {
-	return &CategoriesController{CategoriesRepo: categoriesRepo}
+func NewLocationsController(locationsRepo repository.LocationsRepository) *LocationsController {
+	return &LocationsController{Repo: locationsRepo}
 }
 
-type CategoryDTO struct {
+type LocationDTO struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 
-// GetCategoryByID func gets a category by id
+// GetLocationByID func gets a category by id
 //
 //	@Tags		admin
 //	@Produce	json
-func (c *CategoriesController) GetCategoryByID(ctx *fiber.Ctx) error {
+func (c *LocationsController) GetLocationByID(ctx *fiber.Ctx) error {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 
@@ -34,8 +35,8 @@ func (c *CategoriesController) GetCategoryByID(ctx *fiber.Ctx) error {
 		return ctx.SendString("Error! category_id is not a number")
 	}
 
-	logger.Info("Handling /categories/{id} request", zap.Int64("categoryID", categoryID))
-	category, err := c.CategoriesRepo.GetCategoryByID(categoryID)
+	logger.Info("Handling /locations/{id} request", zap.Int64("categoryID", categoryID))
+	category, err := (c.Repo).GetLocationByID(categoryID)
 	if err != nil {
 		ctx.Status(fiber.StatusInternalServerError)
 		return ctx.SendString("Error! Failed to get category")
@@ -46,21 +47,21 @@ func (c *CategoriesController) GetCategoryByID(ctx *fiber.Ctx) error {
 	})
 }
 
-func (c *CategoriesController) GetCategoriesBySearch(ctx *fiber.Ctx) error {
+func (c *LocationsController) GetLocationsBySearch(ctx *fiber.Ctx) error {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 
 	search := ctx.Query("search")
 
-	data, err := c.CategoriesRepo.GetByString(search, 10)
+	data, err := (c.Repo).GetByString(search, 10)
 	if err != nil {
 		ctx.Status(fiber.StatusInternalServerError)
 		return ctx.SendString("Error!" + err.Error())
 	}
 
-	var dtos []*CategoryDTO
+	var dtos []*LocationDTO
 	for _, category := range data {
-		dtos = append(dtos, &CategoryDTO{
+		dtos = append(dtos, &LocationDTO{
 			ID:   category.ID,
 			Name: category.Name,
 		})
