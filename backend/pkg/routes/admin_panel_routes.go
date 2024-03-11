@@ -6,6 +6,6 @@ import (
 )
 
 func AdminPanelRoutes(a *fiber.App) {
-  route := a.Group("/api/v1/admin")
-  route.Get("/price", controllers.GetPrice)
+	route := a.Group("/api/v1/admin")
+	route.Get("/price", controllers.GetPrice)
 }

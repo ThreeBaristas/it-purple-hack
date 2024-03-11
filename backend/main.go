@@ -7,14 +7,15 @@ import (
 	"threebaristas.com/purple/pkg/routes"
 )
 
-func main()  {
-  logger, _ := zap.NewProduction();
-  app := fiber.New()
+func main() {
+	logger, _ := zap.NewProduction()
+	app := fiber.New()
 
-  middleware.SwaggerMiddleware(app)
+	middleware.SwaggerMiddleware(app)
 
-  routes.AdminPanelRoutes(app)
+	routes.AdminPanelRoutes(app)
+	routes.CategoriesRoutes(app)
 
-  logger.Info("Starting web server")
-  app.Listen(":3000")
+	logger.Info("Starting web server")
+	app.Listen(":3000")
 }
