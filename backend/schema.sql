@@ -8,4 +8,6 @@ CREATE TABLE IF NOT EXISTS prices(
 INSERT INTO prices(category_id, location_id, price, matrix_id) VALUES 
 (1, 1, 500, 0), -- root, root, baseline
 (20, 20, 600, 0), -- Spb, Vehicles, baseline
-(21, 21, 300, 0); -- Petrogradskaya, Cars, baseline
+(21, 21, 300, 0), -- Petrogradskaya, Cars, baseline
+(23, 21, 100, 156),
+(23, 21, 50, 278);

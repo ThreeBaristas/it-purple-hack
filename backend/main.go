@@ -33,6 +33,7 @@ func main() {
 	routes.AdminPanelRoutes(app, &cR, &lR, &pR)
 	routes.CategoriesRoutes(app, &cR)
 	routes.LocationsRoutes(app, &lR)
+	routes.PriceRoutes(app, &cR, &lR, &pR)
 
 	logger.Info("Starting web server")
 	app.Listen(":3000")

@@ -1,4 +1,4 @@
-package admin
+package services
 
 import (
 	"errors"
@@ -6,25 +6,25 @@ import (
 	"threebaristas.com/purple/app/repository"
 )
 
-type AdminService struct {
+type PriceService struct {
 	categoriesRepo *repository.CategoriesRepository
 	locationsRepo  *repository.LocationsRepository
 	priceRepo      *repository.PriceRepository
 }
 
-func NewAdminService(
+func NewPriceService(
 	categoriesRepo *repository.CategoriesRepository,
 	locationsRepo *repository.LocationsRepository,
 	priceRepo *repository.PriceRepository,
-) AdminService {
-	return AdminService{
+) PriceService {
+	return PriceService{
 		categoriesRepo: categoriesRepo,
 		locationsRepo:  locationsRepo,
 		priceRepo:      priceRepo,
 	}
 }
 
-func (a *AdminService) GetPrice(locationId int64, categoryId int64, segmentsIds []int64) (*repository.GetPriceResponse, error) {
+func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds []int64) (*repository.GetPriceResponse, error) {
 
 	location, _ := (*a.locationsRepo).GetLocationByID(locationId)
 	if location == nil {
@@ -67,7 +67,7 @@ func (a *AdminService) GetPrice(locationId int64, categoryId int64, segmentsIds 
 	return firstGoodNode, nil
 }
 
-func (a *AdminService) SegmentToMatrixId(segmentId int64) int64 {
+func (a *PriceService) SegmentToMatrixId(segmentId int64) int64 {
 	return segmentId
 }
 
@@ -91,7 +91,7 @@ func formBatchRequest(locations []*models.Location, categories []*models.Categor
 /** Returns a first node from `response` array that is first from `RoadUpSearch` algortihm's perspectife
  * @param `locations` - array of locations from `location_start` to `ROOT`
  * @param `categories` - array of categories from `category_start` to `ROOT`
- * @param `response` - array of prices for pairs of `category` and `location`
+ * @param `response` - array of prices for pairs of `category` and `location`. This array is ordered by `MatrixId` in descending order
  **/
 func findFirstNode(locations []*models.Location, categories []*models.Category, response []repository.GetPriceResponse) *repository.GetPriceResponse {
 	for _, loc := range locations {
