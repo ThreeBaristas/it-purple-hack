@@ -91,7 +91,7 @@ func formBatchRequest(locations []*models.Location, categories []*models.Categor
 /** Returns a first node from `response` array that is first from `RoadUpSearch` algortihm's perspectife
  * @param `locations` - array of locations from `location_start` to `ROOT`
  * @param `categories` - array of categories from `category_start` to `ROOT`
- * @param `response` - array of prices for pairs of `category` and `location`
+ * @param `response` - array of prices for pairs of `category` and `location`. This array is ordered by `MatrixId` in descending order
  **/
 func findFirstNode(locations []*models.Location, categories []*models.Category, response []repository.GetPriceResponse) *repository.GetPriceResponse {
 	for _, loc := range locations {
