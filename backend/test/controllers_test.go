@@ -88,7 +88,7 @@ func TestGetLocationsBySearch(t *testing.T) {
 	app := fiber.New()
 	app.Get("/locations/search", controller.GetLocationsBySearch)
 
-	t.Run("GetLocationsBySearch_ValidSearch_Success", func(t *testing.T) {
+	t.Run("GetLocationsByValidSearch_Success", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/locations/search?search=ROOT", nil)
 		resp, err := app.Test(req)
 
@@ -114,7 +114,7 @@ func TestGetLocationsBySearch(t *testing.T) {
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 	})
 
-	t.Run("GetLocationsBySearch_Success", func(t *testing.T) {
+	t.Run("GetLocationsByEmptySearch_Success", func(t *testing.T) {
 		// Создание примера дерева локаций
 		locationTree := models.GetLocationTreeExample()
 
