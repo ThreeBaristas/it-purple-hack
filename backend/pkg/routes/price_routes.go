@@ -9,7 +9,7 @@ import (
 
 func PriceRoutes(a *fiber.App, cR *repository.CategoriesRepository, lR *repository.LocationsRepository, pR *repository.PriceRepository) {
 	service := services.NewPriceService(cR, lR, pR)
-  segmentsService := services.NewGetUserSegmentsService()
+	segmentsService := services.NewGetUserSegmentsService()
 	controller := controllers.NewPriceController(&service, segmentsService)
 	a.Get("/api/v1/price", controller.GetPrice)
 }
