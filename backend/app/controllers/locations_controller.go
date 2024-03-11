@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -38,6 +39,13 @@ func (c *LocationsController) GetLocationByID(ctx *fiber.Ctx) error {
 	logger.Info("Handling /locations/{id} request", zap.Int64("categoryID", categoryID))
 	category, err := (*c.repo).GetLocationByID(categoryID)
 	if err != nil {
+		// Проверяем, если ошибка не равна strconv.ErrRange,
+		// которая указывает на то, что парсинг не удался из-за неправильного значения.
+		if err != nil && !errors.Is(err, strconv.ErrRange) {
+			ctx.Status(fiber.StatusNotFound)
+			return ctx.SendString("Error! Category not found")
+		}
+		// В противном случае, возвращаем статус код 500
 		ctx.Status(fiber.StatusInternalServerError)
 		return ctx.SendString("Error! Failed to get category")
 	}
@@ -66,6 +74,5 @@ func (c *LocationsController) GetLocationsBySearch(ctx *fiber.Ctx) error {
 			Name: category.Name,
 		})
 	}
-
 	return ctx.JSON(dtos)
 }

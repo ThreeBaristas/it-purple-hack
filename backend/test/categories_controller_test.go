@@ -2,13 +2,12 @@ package test
 
 import (
 	"encoding/json"
+	"github.com/gofiber/fiber/v2"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
 	"testing"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/stretchr/testify/assert"
 	"threebaristas.com/purple/app/controllers"
 	"threebaristas.com/purple/app/models"
 	"threebaristas.com/purple/app/repository"
