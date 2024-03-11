@@ -34,7 +34,7 @@ func (a *AdminController) GetPrice(c *fiber.Ctx) error {
 	locationId, err := strconv.ParseInt(c.Query("location_id", "NULL"), 10, 64)
 	if err != nil {
 		c.SendStatus(400)
-		return c.SendString("Error! category_id is not a number")
+		return c.SendString("Error! location_id is not a number")
 	}
 	logger.Info("Handling /price request", zap.Int64("categoryId", categoryId), zap.Int64("locationId", locationId))
 	price := a.service.GetPrice(locationId, categoryId)
