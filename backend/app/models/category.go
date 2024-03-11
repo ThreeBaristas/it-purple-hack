@@ -43,29 +43,29 @@ func (c *Category) traverse() []*Category {
 }
 
 func (c *Category) FindChildById(id int64) *Category {
-  if(c.ID == id) {
-    return c
-  }
-  for _, child := range c.Children {
-    res := child.FindChildById(id)
-    if res != nil {
-      return res
-    }
-  }
-  return nil
+	if c.ID == id {
+		return c
+	}
+	for _, child := range c.Children {
+		res := child.FindChildById(id)
+		if res != nil {
+			return res
+		}
+	}
+	return nil
 }
 
 type CategoryPredicate func(c *Category) bool
 
 func (c *Category) FindAllByPredicate(predicate CategoryPredicate) []*Category {
-  var result []*Category;
-  for _, child := range c.Children {
-    result = append(result, child.FindAllByPredicate(predicate)...)
-  }
-  if(predicate(c)) {
-    result = append(result, c);
-  }
-  return result
+	var result []*Category
+	for _, child := range c.Children {
+		result = append(result, child.FindAllByPredicate(predicate)...)
+	}
+	if predicate(c) {
+		result = append(result, c)
+	}
+	return result
 }
 
 // FOR EXAMPLE
@@ -76,6 +76,10 @@ func GetCategoryTreeExample() *Category {
 	electronics.addChild(3, "Товары для компьютера")
 	electronics.addChild(4, "Фототехника")
 	electronics.addChild(8, "Ноутбуки")
+	vehicles := root.addChild(20, "Транспорт")
+	vehicles.addChild(21, "Машины")
+	vehicles.addChild(22, "Катера")
+	vehicles.addChild(23, "Самолеты")
 
-  return &root;
+	return &root
 }
