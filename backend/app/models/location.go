@@ -55,9 +55,9 @@ func GetLocationTreeExample() *Location {
 	ivan.addChild(3, "Кинешма")
 	ivan.addChild(4, "Заволжск")
 	ivan.addChild(5, "Родники")
-	spb := root.addChild(20, "Санкт_Петербург")
+	spb := root.addChild(20, "Санкт-Петербург")
 	spb.addChild(21, "Петроградский р-н")
 	spb.addChild(22, "Центр")
-	spb.addChild(22, "Васильевский остров")
+	spb.addChild(23, "Васильевский остров")
 	return &root
 }
