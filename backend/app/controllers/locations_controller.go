@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"net/http"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -52,6 +53,11 @@ func (c *LocationsController) GetLocationsBySearch(ctx *fiber.Ctx) error {
 	defer logger.Sync()
 
 	search := ctx.Query("search")
+
+	if search == "" {
+		ctx.Status(http.StatusBadRequest)
+		return ctx.SendString("Search query is empty")
+	}
 
 	data, err := (*c.repo).GetByString(search, 10)
 	if err != nil {

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -55,7 +55,7 @@ func TestGetLocationByID(t *testing.T) {
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 		// Чтение тела ответа
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		assert.NoError(t, err)
 
 		// Распарсить JSON из тела ответа
@@ -82,7 +82,7 @@ func TestGetLocationByID(t *testing.T) {
 }
 
 func TestGetLocationsBySearch(t *testing.T) {
-	repo := repository.NewLocationsRepositoryImpl() // Mock your repository implementation for testing
+	repo := repository.NewLocationsRepositoryImpl()
 	controller := controllers.NewLocationsController(&repo)
 
 	app := fiber.New()
@@ -93,25 +93,25 @@ func TestGetLocationsBySearch(t *testing.T) {
 		resp, err := app.Test(req)
 
 		// Чтение тела ответа
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		assert.NoError(t, err)
 
-		// Распарсить JSON из тела ответа
-		var location map[string]interface{}
-		err = json.Unmarshal(body, &location)
+		// Распарсить JSON
+		var locations []map[string]interface{}
+		err = json.Unmarshal(body, &locations)
 		assert.NoError(t, err)
 
-		// Проверить ожидаемые поля в JSON
+		// Проверка полей
 		expectedID := 1
-		actualID := int(location["id"].(float64))
+		actualID := int(locations[0]["id"].(float64))
 		assert.Equal(t, expectedID, actualID)
+
 		expectedName := "ROOT"
-		actualName := location["name"]
+		actualName := locations[0]["name"].(string)
 		assert.Equal(t, expectedName, actualName)
 
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
-
 	})
 
 	t.Run("GetLocationsBySearch_EmptySearch_BadRequest", func(t *testing.T) {
