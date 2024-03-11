@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"net/http"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -54,11 +53,6 @@ func (c *LocationsController) GetLocationsBySearch(ctx *fiber.Ctx) error {
 
 	search := ctx.Query("search")
 
-	if search == "" {
-		ctx.Status(http.StatusBadRequest)
-		return ctx.SendString("Search query is empty")
-	}
-
 	data, err := (*c.repo).GetByString(search, 10)
 	if err != nil {
 		ctx.Status(fiber.StatusInternalServerError)
@@ -72,6 +66,5 @@ func (c *LocationsController) GetLocationsBySearch(ctx *fiber.Ctx) error {
 			Name: category.Name,
 		})
 	}
-
 	return ctx.JSON(dtos)
 }

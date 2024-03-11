@@ -114,11 +114,33 @@ func TestGetLocationsBySearch(t *testing.T) {
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 	})
 
-	t.Run("GetLocationsBySearch_EmptySearch_BadRequest", func(t *testing.T) {
+	t.Run("GetLocationsBySearch_Success", func(t *testing.T) {
+		// Создание примера дерева локаций
+		locationTree := models.GetLocationTreeExample()
+
 		req := httptest.NewRequest(http.MethodGet, "/locations/search", nil)
 		resp, err := app.Test(req)
-
 		assert.NoError(t, err)
-		assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+		// Чтение тела ответа
+		body, err := io.ReadAll(resp.Body)
+		assert.NoError(t, err)
+
+		var locations []map[string]interface{}
+		err = json.Unmarshal(body, &locations)
+		assert.NoError(t, err)
+
+		// Проверка, что все 5 значений присутствуют в ответе
+		for _, expectedLocation := range locationTree.Children {
+			found := false
+			for _, actualLocation := range locations {
+				if expectedLocation.Name == actualLocation["name"].(string) {
+					found = true
+					break
+				}
+			}
+			assert.True(t, found, "Expected location not found in response: %s", expectedLocation.Name)
+		}
 	})
 }
