@@ -42,8 +42,34 @@ func (c *Category) traverse() []*Category {
 	return result
 }
 
+func (c *Category) FindChildById(id int64) *Category {
+  if(c.ID == id) {
+    return c
+  }
+  for _, child := range c.Children {
+    res := child.FindChildById(id)
+    if res != nil {
+      return res
+    }
+  }
+  return nil
+}
+
+type CategoryPredicate func(c *Category) bool
+
+func (c *Category) FindAllByPredicate(predicate CategoryPredicate) []*Category {
+  var result []*Category;
+  for _, child := range c.Children {
+    result = append(result, child.FindAllByPredicate(predicate)...)
+  }
+  if(predicate(c)) {
+    result = append(result, c);
+  }
+  return result
+}
+
 // FOR EXAMPLE
-func GetCategoryListExample() []*Category {
+func GetCategoryTreeExample() *Category {
 	// Создаем новый пустой список категорий
 	root := emptyCategory(1, "ROOT", nil)
 	electronics := root.addChild(2, "Бытовая электроника")
@@ -51,5 +77,5 @@ func GetCategoryListExample() []*Category {
 	electronics.addChild(4, "Фототехника")
 	electronics.addChild(8, "Ноутбуки")
 
-	return root.traverse()
+  return &root;
 }
