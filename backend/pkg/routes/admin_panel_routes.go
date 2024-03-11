@@ -12,4 +12,5 @@ func AdminPanelRoutes(a *fiber.App, cR *repository.CategoriesRepository, lR *rep
 	controller := controllers.NewAdminController(&service)
 	route := a.Group("/api/v1/admin")
 	route.Get("/price", controller.GetPrice)
+	route.Put("/price", controller.SetPrice)
 }
