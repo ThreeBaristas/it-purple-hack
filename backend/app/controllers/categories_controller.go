@@ -8,11 +8,11 @@ import (
 )
 
 type CategoriesController struct {
-	CategoriesRepo repository.CategoriesRepository
+	repo *repository.CategoriesRepository
 }
 
-func NewCategoriesController(categoriesRepo repository.CategoriesRepository) *CategoriesController {
-	return &CategoriesController{CategoriesRepo: categoriesRepo}
+func NewCategoriesController(categoriesRepo *repository.CategoriesRepository) *CategoriesController {
+	return &CategoriesController{repo: categoriesRepo}
 }
 
 type CategoryDTO struct {
@@ -35,7 +35,7 @@ func (c *CategoriesController) GetCategoryByID(ctx *fiber.Ctx) error {
 	}
 
 	logger.Info("Handling /categories/{id} request", zap.Int64("categoryID", categoryID))
-	category, err := c.CategoriesRepo.GetCategoryByID(categoryID)
+	category, err := (*c.repo).GetCategoryByID(categoryID)
 	if err != nil {
 		ctx.Status(fiber.StatusInternalServerError)
 		return ctx.SendString("Error! Failed to get category")
@@ -52,7 +52,7 @@ func (c *CategoriesController) GetCategoriesBySearch(ctx *fiber.Ctx) error {
 
 	search := ctx.Query("search")
 
-	data, err := c.CategoriesRepo.GetByString(search, 10)
+	data, err := (*c.repo).GetByString(search, 10)
 	if err != nil {
 		ctx.Status(fiber.StatusInternalServerError)
 		return ctx.SendString("Error!" + err.Error())

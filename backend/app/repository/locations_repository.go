@@ -15,7 +15,7 @@ type LocationsRepositoryImpl struct {
 	LocationRoot *models.Location
 }
 
-func NewLocationsRepositoryImpl() *LocationsRepositoryImpl {
+func NewLocationsRepositoryImpl() LocationsRepository {
 	return &LocationsRepositoryImpl{
 		LocationRoot: models.GetLocationTreeExample(),
 	}
