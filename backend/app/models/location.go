@@ -30,25 +30,24 @@ func (c *Location) addChild(id int64, name string) *Location {
 	return &newLocation
 }
 
-func (c *Location) traverse() []*Location {
+func (c *Location) Traverse() []*Location {
 	if len(c.Children) == 0 {
 		return []*Location{c}
 	}
 	var result []*Location
 	for _, child := range c.Children {
-		result = append(result, child.traverse()...)
+		result = append(result, child.Traverse()...)
 	}
 	result = append(result, c)
 	return result
 }
 
-// FOR EXAMPLE
-func GetLocationListExample() []*Location {
+func GetLocationTreeExample() *Location {
 	root := emptyLocation(1, "ROOT", nil)
 	ivan := root.addChild(2, "Ивановская область")
 	ivan.addChild(3, "Кинешма")
 	ivan.addChild(4, "Заволжск")
 	ivan.addChild(5, "Родники")
 
-	return root.traverse()
+	return &root
 }
