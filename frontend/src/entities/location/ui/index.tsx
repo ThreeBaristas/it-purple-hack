@@ -68,7 +68,10 @@ const SelectLocation = React.forwardRef<
                 <CommandItem
                   key={location.id}
                   value={String(location.id)}
-                  onSelect={() => onChange(location)}
+                  onSelect={() => {
+                    onChange(location)
+                    setOpen(false)
+                  }}
                 >
                   {location.name}
                   <CheckIcon
