@@ -1,6 +1,8 @@
 package main
 
 import (
+	"database/sql"
+
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"threebaristas.com/purple/pkg/middleware"
@@ -9,6 +11,12 @@ import (
 
 func main() {
 	logger, _ := zap.NewProduction()
+
+  _, err := sql.Open("postgres", "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable");
+  if err != nil {
+    logger.Error("Could not initialize db connection", zap.Error(err))
+  }
+
 	app := fiber.New()
 
 	middleware.SwaggerMiddleware(app)
