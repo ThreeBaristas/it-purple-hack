@@ -7,7 +7,6 @@ import { routeTree } from '@/pages/root'
 
 import { client } from './query'
 
-
 const router = createRouter({
   routeTree,
   context: {
