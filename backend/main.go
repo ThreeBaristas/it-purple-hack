@@ -2,6 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
@@ -13,10 +16,15 @@ import (
 func main() {
 	logger, _ := zap.NewProduction()
 
-	db, err := sql.Open("postgres", "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
+  postgres_host := os.Getenv("DB_HOST")
+  if postgres_host == "" {
+    postgres_host = "localhost"
+  }
+	db, err := sql.Open("postgres", fmt.Sprintf("postgres://postgres:postgres@%s:5432/postgres?sslmode=disable", postgres_host))
 	if err != nil {
 		logger.Fatal("Could not initialize db connection", zap.Error(err))
 	}
+  time.Sleep(1 * time.Second)
 	err = db.Ping()
 	if err != nil {
 		logger.Fatal("Could not initialize db connection", zap.Error(err))
@@ -28,7 +36,9 @@ func main() {
 
 	app := fiber.New()
 
-	middleware.SwaggerMiddleware(app)
+  if os.Getenv("MODE") == "dev" {
+    middleware.SwaggerMiddleware(app)
+  }
 
 	routes.AdminPanelRoutes(app, &cR, &lR, &pR)
 	routes.CategoriesRoutes(app, &cR)

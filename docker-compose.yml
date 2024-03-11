@@ -11,9 +11,18 @@ services:
   backend:
     build:
       target: purple
+      context: backend/
     depends_on:
       - "postgres"
     ports:
       - "3000:3000"
     environment:
       DB_HOST: "postgres"
+
+  frontend:
+    build:
+      context: frontend/
+    depends_on:
+      - "backend"
+    ports:
+      - "80:80"
