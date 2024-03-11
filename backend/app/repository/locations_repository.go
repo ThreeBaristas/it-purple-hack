@@ -24,7 +24,6 @@ func NewLocationsRepositoryImpl() LocationsRepository {
 func (r *LocationsRepositoryImpl) GetLocationByID(id int64) (*models.Location, error) {
 	list := r.LocationRoot.Traverse()
 	for _, category := range list {
-		//println(category.ID, category.Name)
 		if category.ID == id {
 			return category, nil
 		}
