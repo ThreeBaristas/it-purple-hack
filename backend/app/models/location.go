@@ -31,14 +31,21 @@ func (c *Location) addChild(id int64, name string) *Location {
 }
 
 func (c *Location) Traverse() []*Location {
-	if len(c.Children) == 0 {
-		return []*Location{c}
-	}
+	return c.FindAllByPredicate(func(c *Location) bool {
+		return true
+	})
+}
+
+type LocationPredicate func(l *Location) bool
+
+func (l *Location) FindAllByPredicate(predicate LocationPredicate) []*Location {
 	var result []*Location
-	for _, child := range c.Children {
-		result = append(result, child.Traverse()...)
+	for _, child := range l.Children {
+		result = append(result, child.FindAllByPredicate(predicate)...)
 	}
-	result = append(result, c)
+	if predicate(l) {
+		result = append(result, l)
+	}
 	return result
 }
 
@@ -48,6 +55,7 @@ func GetLocationTreeExample() *Location {
 	ivan.addChild(3, "Кинешма")
 	ivan.addChild(4, "Заволжск")
 	ivan.addChild(5, "Родники")
-
+	spb := root.addChild(20, "Санкт_Петербург")
+	spb.addChild(21, "Петроградский р-н")
 	return &root
 }

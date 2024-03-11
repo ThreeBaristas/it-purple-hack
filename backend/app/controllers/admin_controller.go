@@ -37,10 +37,16 @@ func (a *AdminController) GetPrice(c *fiber.Ctx) error {
 		return c.SendString("Error! location_id is not a number")
 	}
 	logger.Info("Handling /price request", zap.Int64("categoryId", categoryId), zap.Int64("locationId", locationId))
-	price := a.service.GetPrice(locationId, categoryId)
+	resp, err := a.service.GetPrice(locationId, categoryId, nil)
+	if err != nil {
+		c.SendStatus(500)
+		logger.Error("Could not compute price", zap.Error(err))
+		return c.SendString("Error. could not find price. " + err.Error())
+	}
+
 	return c.JSON(fiber.Map{
-		"price":       price,
-		"category_id": categoryId,
-		"location_id": locationId,
+		"price":       resp.Price,
+		"category_id": resp.CategoryId,
+		"location_id": resp.LocationId,
 	})
 }

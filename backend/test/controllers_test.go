@@ -16,7 +16,7 @@ import (
 
 func TestGetCategoryByID(t *testing.T) {
 	mockRepo := repository.NewCategoriesRepositoryImpl()
-	controller := controllers.NewCategoriesController(mockRepo)
+	controller := controllers.NewCategoriesController(&mockRepo)
 
 	app := fiber.New()
 	app.Get("/categories/:id", controller.GetCategoryByID)
