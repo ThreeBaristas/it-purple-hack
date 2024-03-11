@@ -1,3 +1,6 @@
+import { Eye, Trash } from 'lucide-react'
+
+import { Button } from '@/shared/ui'
 import {
   Table,
   TableBody,
@@ -8,8 +11,6 @@ import {
 } from '@/shared/ui/table'
 
 import { Rule } from '../model'
-import { Button } from '@/shared/ui'
-import { Eye } from 'lucide-react'
 
 export function RulesTable({ rows }: { rows: Rule[] }) {
   return (
@@ -48,8 +49,11 @@ function RuleRow({ rule }: { rule: Rule }) {
         }).format(rule.price)}
       </TableCell>
       <TableCell>
-        <Button variant="outline" size="icon">
-          <Eye className="size-6" />
+        <Button variant="outline" size="icon" className="size-8">
+          <Eye className="size-4" />
+        </Button>
+        <Button variant="destructive" size="icon" className="ml-2 size-8">
+          <Trash className="size-4" />
         </Button>
       </TableCell>
     </TableRow>
