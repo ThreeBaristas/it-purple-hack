@@ -8,7 +8,7 @@ import (
 
 func CategoriesRoutes(a *fiber.App, repo *repository.CategoriesRepository) {
 	CategoriesController := controllers.NewCategoriesController(repo)
-  a.Get("/api/v1/categories", CategoriesController.GetCategoriesBySearch)
+	a.Get("/api/v1/categories", CategoriesController.GetCategoriesBySearch)
 	route := a.Group("/api/v1/categories")
 	route.Get("/:id", CategoriesController.GetCategoryByID)
 }

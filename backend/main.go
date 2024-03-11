@@ -17,14 +17,14 @@ func main() {
 	if err != nil {
 		logger.Fatal("Could not initialize db connection", zap.Error(err))
 	}
-  err = db.Ping()
+	err = db.Ping()
 	if err != nil {
 		logger.Fatal("Could not initialize db connection", zap.Error(err))
 	}
 
-  cR := repository.NewCategoriesRepositoryImpl()
-  lR := repository.NewLocationsRepositoryImpl()
-  pR := repository.NewPostgresPriceRepository(db)
+	cR := repository.NewCategoriesRepositoryImpl()
+	lR := repository.NewLocationsRepositoryImpl()
+	pR := repository.NewPostgresPriceRepository(db)
 
 	app := fiber.New()
 

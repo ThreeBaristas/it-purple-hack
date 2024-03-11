@@ -8,22 +8,22 @@ import (
 )
 
 type AdminController struct {
-  service *admin.AdminService
+	service *admin.AdminService
 }
 
 func NewAdminController(
-  service *admin.AdminService,
+	service *admin.AdminService,
 ) AdminController {
-  return AdminController {
-    service: service,
-  }
+	return AdminController{
+		service: service,
+	}
 }
 
 // GetPrice func gets a price for given category_id & location_id
 //
 //	@Tags		admin
 //	@Produce	json
- func (a *AdminController) GetPrice(c *fiber.Ctx) error {
+func (a *AdminController) GetPrice(c *fiber.Ctx) error {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 	categoryId, err := strconv.ParseInt(c.Query("category_id", "NULL"), 10, 64)

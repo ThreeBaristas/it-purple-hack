@@ -8,8 +8,8 @@ import (
 )
 
 func AdminPanelRoutes(a *fiber.App, cR *repository.CategoriesRepository, lR *repository.LocationsRepository, pR *repository.PriceRepository) {
-  service := admin.NewAdminService(cR, lR, pR)
-  controller := controllers.NewAdminController(&service)
+	service := admin.NewAdminService(cR, lR, pR)
+	controller := controllers.NewAdminController(&service)
 	route := a.Group("/api/v1/admin")
 	route.Get("/price", controller.GetPrice)
 }

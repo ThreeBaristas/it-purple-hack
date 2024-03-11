@@ -15,8 +15,8 @@ func NewAdminService(
 ) AdminService {
 	return AdminService{
 		categoriesRepo: categoriesRepo,
-    locationsRepo: locationsRepo,
-    priceRepo: priceRepo,
+		locationsRepo:  locationsRepo,
+		priceRepo:      priceRepo,
 	}
 }
 
