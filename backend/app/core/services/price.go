@@ -12,6 +12,23 @@ type PriceService struct {
 	priceRepo      *repository.PriceRepository
 }
 
+type PriceRule struct {
+	Location *models.Location `json:"location"`
+	Category *models.Category `json:"category"`
+	Segment  int64            `json:"segment"`
+	Price    int64            `json:"price"`
+}
+
+type GetRulesResponse struct {
+	Data       []PriceRule `json:"data"`
+	TotalPages int32       `json:"totalPages"`
+}
+
+type GetPricesRequest struct {
+	Page     int64
+	PageSize int32
+}
+
 func NewPriceService(
 	categoriesRepo *repository.CategoriesRepository,
 	locationsRepo *repository.LocationsRepository,
@@ -25,11 +42,40 @@ func NewPriceService(
 }
 
 func (a *PriceService) SetPrice(locationId int64, categoryId int64, segmentsId int64, price int64) (*repository.GetPriceResponse, error) {
-  return (*a.priceRepo).SetPrice(locationId, categoryId, segmentsId, price)
+	return (*a.priceRepo).SetPrice(locationId, categoryId, segmentsId, price)
 }
 
 func (a *PriceService) DeletePrice(locationId int64, categoryId int64, segmentId int64) (bool, error) {
-  return (*a.priceRepo).DeletePrice(locationId, categoryId, segmentId)
+	return (*a.priceRepo).DeletePrice(locationId, categoryId, segmentId)
+}
+
+func (a *PriceService) GetRules(req GetPricesRequest) (*GetRulesResponse, error) {
+	res, totalPages, err := (*a.priceRepo).GetRules(req.PageSize, req.Page)
+	if err != nil {
+		return nil, err
+	}
+	var res1 []PriceRule
+	for _, r := range res {
+		location, err := (*a.locationsRepo).GetLocationByID(r.LocationId)
+		if err != nil {
+			return nil, err
+		}
+		category, err := (*a.categoriesRepo).GetCategoryByID(r.CategoryId)
+		if err != nil {
+			return nil, err
+		}
+
+		res1 = append(res1, PriceRule{
+			Location: location,
+			Category: category,
+			Segment:  r.MatrixId,
+			Price:    r.Price,
+		})
+	}
+	return &GetRulesResponse{
+		Data:       res1,
+		TotalPages: int32(totalPages),
+	}, nil
 }
 
 func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds []int64) (*repository.GetPriceResponse, error) {
