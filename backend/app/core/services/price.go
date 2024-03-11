@@ -1,4 +1,4 @@
-package admin
+package services
 
 import (
 	"errors"
@@ -6,25 +6,25 @@ import (
 	"threebaristas.com/purple/app/repository"
 )
 
-type AdminService struct {
+type PriceService struct {
 	categoriesRepo *repository.CategoriesRepository
 	locationsRepo  *repository.LocationsRepository
 	priceRepo      *repository.PriceRepository
 }
 
-func NewAdminService(
+func NewPriceService(
 	categoriesRepo *repository.CategoriesRepository,
 	locationsRepo *repository.LocationsRepository,
 	priceRepo *repository.PriceRepository,
-) AdminService {
-	return AdminService{
+) PriceService {
+	return PriceService{
 		categoriesRepo: categoriesRepo,
 		locationsRepo:  locationsRepo,
 		priceRepo:      priceRepo,
 	}
 }
 
-func (a *AdminService) GetPrice(locationId int64, categoryId int64, segmentsIds []int64) (*repository.GetPriceResponse, error) {
+func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds []int64) (*repository.GetPriceResponse, error) {
 
 	location, _ := (*a.locationsRepo).GetLocationByID(locationId)
 	if location == nil {
@@ -67,7 +67,7 @@ func (a *AdminService) GetPrice(locationId int64, categoryId int64, segmentsIds 
 	return firstGoodNode, nil
 }
 
-func (a *AdminService) SegmentToMatrixId(segmentId int64) int64 {
+func (a *PriceService) SegmentToMatrixId(segmentId int64) int64 {
 	return segmentId
 }
 

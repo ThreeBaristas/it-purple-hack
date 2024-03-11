@@ -4,15 +4,15 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"strconv"
-	"threebaristas.com/purple/app/core/admin"
+	"threebaristas.com/purple/app/core/services"
 )
 
 type AdminController struct {
-	service *admin.AdminService
+	service *services.PriceService
 }
 
 func NewAdminController(
-	service *admin.AdminService,
+	service *services.PriceService,
 ) AdminController {
 	return AdminController{
 		service: service,
