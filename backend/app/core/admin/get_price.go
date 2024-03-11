@@ -51,11 +51,11 @@ func (a *AdminService) GetPrice(locationId int64, categoryId int64, segmentsIds 
 	}
 
 	req := formBatchRequest(locations, categories)
-  var matricesIds []int64;
-  for _, value := range segmentsIds {
-    matricesIds = append(matricesIds, a.SegmentToMatrixId(value))
-  }
-  req.Matrices = matricesIds;
+	var matricesIds []int64
+	for _, value := range segmentsIds {
+		matricesIds = append(matricesIds, a.SegmentToMatrixId(value))
+	}
+	req.Matrices = matricesIds
 
 	response, err := (*a.priceRepo).GetPricesBatch(req)
 	if err != nil {
@@ -68,7 +68,7 @@ func (a *AdminService) GetPrice(locationId int64, categoryId int64, segmentsIds 
 }
 
 func (a *AdminService) SegmentToMatrixId(segmentId int64) int64 {
-  return segmentId
+	return segmentId
 }
 
 func formBatchRequest(locations []*models.Location, categories []*models.Category) *repository.GetPriceRequest {
