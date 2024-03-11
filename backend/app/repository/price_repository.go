@@ -23,6 +23,7 @@ type PriceRepository interface {
 	GetPricesBatch(nodes *GetPriceRequest) ([]GetPriceResponse, error)
   SetPrice(locationId int64, categoryId int64, segmentId int64, price int64) (*GetPriceResponse, error)
   DeletePrice(locationId int64, categoryId int64, segmentId int64) (bool, error)
+  GetRules(pageSize int32, page int64) ([]GetPriceResponse, int, error)
 }
 
 type PostgresPriceRepository struct {
@@ -53,7 +54,7 @@ func (r *PostgresPriceRepository) GetPricesBatch(req *GetPriceRequest) ([]GetPri
 		if matrixId.Valid {
 			cur.MatrixId = matrixId.V
 		} else {
-			// cur.MatrixId = 0
+			cur.MatrixId = 0
 		}
 
 		ans = append(ans, cur)
@@ -81,5 +82,33 @@ func (r*PostgresPriceRepository) DeletePrice(locationId int64, categoryId int64,
   }
   rows, err := res.RowsAffected()
   return rows > 0, err
+}
+
+
+func (r *PostgresPriceRepository) GetRules(pageSize int32, page int64) ([]GetPriceResponse, int, error) {
+  rows, err := r.db.Query("SELECT location_id, category_id, price, matrix_id, count(*) OVER() AS full_count FROM prices ORDER BY (location_id, category_id, matrix_id) LIMIT $1 OFFSET $2", pageSize, page * int64(pageSize));
+  if err != nil {
+    return nil, 0, err
+  }
+
+  var ans []GetPriceResponse
+  var count int
+  for rows.Next() {
+    cur := GetPriceResponse{}
+    var matrixId sql.Null[int64]
+    err := rows.Scan(&cur.LocationId, &cur.CategoryId, &cur.Price, &matrixId, &count)
+    if err != nil {
+      return nil, 0, err
+    }
+
+    if matrixId.Valid {
+      cur.MatrixId = matrixId.V
+    } else {
+      cur.MatrixId = 0
+    }
+
+    ans = append(ans, cur)
+  }
+  return ans, (count + int(pageSize) - 1) / int(pageSize), nil
 }
 

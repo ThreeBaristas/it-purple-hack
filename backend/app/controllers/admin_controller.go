@@ -125,3 +125,60 @@ func (a *AdminController) DeletePrice(c *fiber.Ctx) error {
   return c.JSON(resp)
 }
 
+func (a *AdminController) GetRules(c *fiber.Ctx) error {
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
+
+	page, err := strconv.ParseInt(c.Query("page", "0"), 10, 64)
+	if err != nil {
+    logger.Error("Could not parse page", zap.Error(err))
+		c.SendStatus(400)
+		return c.SendString("Error! page is not a number")
+	}
+
+	pageSize, err := strconv.ParseInt(c.Query("pageSize", "10"), 10, 64)
+	if err != nil {
+    logger.Error("Could not parse pageSize", zap.Error(err))
+		c.SendStatus(400)
+		return c.SendString("Error! pageSize is not a number")
+	}
+
+  rules, err := a.service.GetRules(services.GetPricesRequest{Page: page, PageSize: int32(pageSize)})
+	if err != nil {
+    logger.Error("Could not get rules", zap.Error(err))
+		c.SendStatus(500)
+		return c.SendString("Error! could not get rules")
+	}
+  logger.Info("Got all rules from db", zap.Int64("totalPages", int64(rules.TotalPages)))
+  var dtosArray []RuleDTO
+  for _, val := range rules.Data {
+    dtosArray = append(dtosArray, RuleDTO{
+      Location: LocationDTO{
+        ID: val.Location.ID,
+        Name: val.Location.Name,
+      },
+      Category: CategoryDTO{
+        ID: val.Category.ID,
+        Name: val.Category.Name,
+      },
+      MatrixId: val.Segment,
+      Price: val.Price,
+    })
+  }
+  return c.JSON(GetRulesResponse {
+    Data: dtosArray,
+    TotalPage: int64(rules.TotalPages),
+  });
+}
+
+type RuleDTO struct {
+  Location LocationDTO `json:"location"`
+  Category CategoryDTO `json:"category"`
+  MatrixId int64 `json:"segment"`
+  Price int64 `json:"price"`
+}
+
+type GetRulesResponse struct {
+  Data []RuleDTO `json:"data"`
+  TotalPage int64 `json:"totalPages"`
+}

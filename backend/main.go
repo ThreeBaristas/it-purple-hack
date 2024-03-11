@@ -4,8 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"time"
-
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"threebaristas.com/purple/app/repository"
@@ -24,7 +22,6 @@ func main() {
 	if err != nil {
 		logger.Fatal("Could not initialize db connection", zap.Error(err))
 	}
-  time.Sleep(1 * time.Second)
 	err = db.Ping()
 	if err != nil {
 		logger.Fatal("Could not initialize db connection", zap.Error(err))
