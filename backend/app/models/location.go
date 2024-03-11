@@ -31,15 +31,22 @@ func (c *Location) addChild(id int64, name string) *Location {
 }
 
 func (c *Location) Traverse() []*Location {
-	if len(c.Children) == 0 {
-		return []*Location{c}
-	}
-	var result []*Location
-	for _, child := range c.Children {
-		result = append(result, child.Traverse()...)
-	}
-	result = append(result, c)
-	return result
+  return c.FindAllByPredicate(func (c *Location) bool {
+    return true;
+  })
+}
+
+type LocationPredicate func(l *Location) bool
+
+func (l *Location) FindAllByPredicate(predicate LocationPredicate) []*Location {
+  var result []*Location;
+  for _, child := range l.Children {
+    result = append(result, child.FindAllByPredicate(predicate)...)
+  }
+  if(predicate(l)) {
+    result = append(result, l);
+  }
+  return result
 }
 
 func GetLocationTreeExample() *Location {
