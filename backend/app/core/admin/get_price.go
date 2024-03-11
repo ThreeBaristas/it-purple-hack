@@ -24,7 +24,7 @@ func NewAdminService(
 	}
 }
 
-func (a *AdminService) GetPrice(locationId int64, categoryId int64) (*repository.GetPriceResponse, error) {
+func (a *AdminService) GetPrice(locationId int64, categoryId int64, segmentsIds []int64) (*repository.GetPriceResponse, error) {
 
 	location, _ := (*a.locationsRepo).GetLocationByID(locationId)
 	if location == nil {
@@ -51,6 +51,11 @@ func (a *AdminService) GetPrice(locationId int64, categoryId int64) (*repository
 	}
 
 	req := formBatchRequest(locations, categories)
+  var matricesIds []int64;
+  for _, value := range segmentsIds {
+    matricesIds = append(matricesIds, a.SegmentToMatrixId(value))
+  }
+  req.Matrices = matricesIds;
 
 	response, err := (*a.priceRepo).GetPricesBatch(req)
 	if err != nil {
@@ -62,16 +67,18 @@ func (a *AdminService) GetPrice(locationId int64, categoryId int64) (*repository
 	return firstGoodNode, nil
 }
 
+func (a *AdminService) SegmentToMatrixId(segmentId int64) int64 {
+  return segmentId
+}
+
 func formBatchRequest(locations []*models.Location, categories []*models.Category) *repository.GetPriceRequest {
 	var locationsIds []int64
 	var categoryIds []int64
 	// location pointer
 	for _, loc := range locations {
-		println(loc.ID)
 		locationsIds = append(locationsIds, loc.ID)
 	}
 	for _, category := range categories {
-		println(category.ID)
 		categoryIds = append(categoryIds, category.ID)
 	}
 	return &repository.GetPriceRequest{
