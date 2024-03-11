@@ -6,10 +6,8 @@ import (
 	"threebaristas.com/purple/app/repository"
 )
 
-func CategoriesRoutes(a *fiber.App) {
-	CategoriesController := controllers.CategoriesController{
-		CategoriesRepo: repository.NewCategoriesRepositoryImpl(),
-	}
+func CategoriesRoutes(a *fiber.App, repo *repository.CategoriesRepository) {
+	CategoriesController := controllers.NewCategoriesController(repo)
 	a.Get("/api/v1/categories", CategoriesController.GetCategoriesBySearch)
 	route := a.Group("/api/v1/categories")
 	route.Get("/:id", CategoriesController.GetCategoryByID)

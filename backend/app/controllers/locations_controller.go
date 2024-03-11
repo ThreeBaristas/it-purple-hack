@@ -9,11 +9,11 @@ import (
 )
 
 type LocationsController struct {
-	Repo repository.LocationsRepository
+	repo *repository.LocationsRepository
 }
 
-func NewLocationsController(locationsRepo repository.LocationsRepository) *LocationsController {
-	return &LocationsController{Repo: locationsRepo}
+func NewLocationsController(locationsRepo *repository.LocationsRepository) *LocationsController {
+	return &LocationsController{repo: locationsRepo}
 }
 
 type LocationDTO struct {
@@ -36,7 +36,7 @@ func (c *LocationsController) GetLocationByID(ctx *fiber.Ctx) error {
 	}
 
 	logger.Info("Handling /locations/{id} request", zap.Int64("categoryID", categoryID))
-	category, err := (c.Repo).GetLocationByID(categoryID)
+	category, err := (*c.repo).GetLocationByID(categoryID)
 	if err != nil {
 		ctx.Status(fiber.StatusInternalServerError)
 		return ctx.SendString("Error! Failed to get category")
@@ -53,7 +53,7 @@ func (c *LocationsController) GetLocationsBySearch(ctx *fiber.Ctx) error {
 
 	search := ctx.Query("search")
 
-	data, err := (c.Repo).GetByString(search, 10)
+	data, err := (*c.repo).GetByString(search, 10)
 	if err != nil {
 		ctx.Status(fiber.StatusInternalServerError)
 		return ctx.SendString("Error!" + err.Error())

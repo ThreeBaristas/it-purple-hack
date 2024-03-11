@@ -15,7 +15,7 @@ type CategoriesRepositoryImpl struct {
 	CategoryList []*models.Category
 }
 
-func NewCategoriesRepositoryImpl() *CategoriesRepositoryImpl {
+func NewCategoriesRepositoryImpl() CategoriesRepository {
 	return &CategoriesRepositoryImpl{
 		CategoryList: models.GetCategoryListExample(),
 	}
