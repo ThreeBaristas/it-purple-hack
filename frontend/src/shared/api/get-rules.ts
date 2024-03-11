@@ -28,6 +28,6 @@ type Response = {
 
 export async function getRules(req: Request): Promise<Response> {
   const qs = QueryString.stringify(req)
-  const data = await axiosInstance.get<Response>('/admin/rules' + qs)
+  const data = await axiosInstance.get<Response>('/admin/rules?' + qs)
   return data.data
 }
