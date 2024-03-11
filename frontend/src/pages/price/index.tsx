@@ -1,15 +1,8 @@
-import { QueryClient } from '@tanstack/react-query'
 import { createRoute } from '@tanstack/react-router'
 import { number, object, optional, type Output, parse } from 'valibot'
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/shared/ui'
-import { Label } from '@/shared/ui/ui/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui'
+import { Label } from '@/shared/ui/label'
 
 import { rootRoute } from '../root'
 import { getPriceQueryOptions } from './api'

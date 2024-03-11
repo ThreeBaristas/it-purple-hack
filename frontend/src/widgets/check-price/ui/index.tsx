@@ -20,8 +20,7 @@ import {
   FormField,
   FormItem,
   FormLabel
-} from '@/shared/ui/ui/form'
-import { Separator } from '@/shared/ui/ui/separator'
+} from '@/shared/ui/form'
 
 type CheckPriceProps = React.HTMLAttributes<HTMLDivElement>
 
