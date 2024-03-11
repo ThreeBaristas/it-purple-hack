@@ -22,6 +22,7 @@ type GetPriceResponse struct {
 type PriceRepository interface {
 	GetPricesBatch(nodes *GetPriceRequest) ([]GetPriceResponse, error)
   SetPrice(locationId int64, categoryId int64, segmentId int64, price int64) (*GetPriceResponse, error)
+  DeletePrice(locationId int64, categoryId int64, segmentId int64) (bool, error)
 }
 
 type PostgresPriceRepository struct {
@@ -72,3 +73,13 @@ func(r *PostgresPriceRepository) SetPrice(locationId int64, categoryId int64, se
     Price: price,
   }, nil
 }
+
+func (r*PostgresPriceRepository) DeletePrice(locationId int64, categoryId int64, segmentId int64) (bool, error) {
+  res, err := r.db.Exec("DELETE FROM prices WHERE location_id = $1 AND category_id = $2 AND matrix_id = $3", locationId, categoryId, segmentId)
+  if err != nil {
+    return false, err
+  }
+  rows, err := res.RowsAffected()
+  return rows > 0, err
+}
+
