@@ -2,13 +2,13 @@ package test
 
 import (
 	"encoding/json"
+	"github.com/gofiber/fiber/v2"
+	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
 	"testing"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/stretchr/testify/assert"
 	"threebaristas.com/purple/app/controllers"
 	"threebaristas.com/purple/app/models"
 	"threebaristas.com/purple/app/repository"
@@ -16,7 +16,7 @@ import (
 
 func TestGetCategoryByID(t *testing.T) {
 	mockRepo := repository.NewCategoriesRepositoryImpl()
-	controller := controllers.NewCategoriesController(mockRepo)
+	controller := controllers.NewCategoriesController(&mockRepo)
 
 	app := fiber.New()
 	app.Get("/categories/:id", controller.GetCategoryByID)
@@ -37,5 +37,88 @@ func TestGetCategoryByID(t *testing.T) {
 		err = json.NewDecoder(resp.Body).Decode(&returnedCategory)
 		assert.NoError(t, err)
 		assert.Equal(t, expectedCategory, &returnedCategory)
+	})
+}
+
+func TestGetLocationByID(t *testing.T) {
+	repo := repository.NewLocationsRepositoryImpl()
+	controller := controllers.NewLocationsController(&repo)
+
+	app := fiber.New()
+	app.Get("/locations/:id", controller.GetLocationByID)
+
+	t.Run("GetLocationByID_ValidID_Success", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/locations/1", nil)
+		resp, err := app.Test(req)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+		// Чтение тела ответа
+		body, err := ioutil.ReadAll(resp.Body)
+		assert.NoError(t, err)
+
+		// Распарсить JSON из тела ответа
+		var location map[string]interface{}
+		err = json.Unmarshal(body, &location)
+		assert.NoError(t, err)
+
+		// Проверить ожидаемые поля в JSON
+		expectedID := 1
+		actualID := int(location["id"].(float64))
+		assert.Equal(t, expectedID, actualID)
+		expectedName := "ROOT"
+		actualName := location["name"]
+		assert.Equal(t, expectedName, actualName)
+	})
+
+	t.Run("GetLocationByID_InvalidID_BadRequest", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/locations/invalid_id", nil)
+		resp, err := app.Test(req)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+	})
+}
+
+func TestGetLocationsBySearch(t *testing.T) {
+	repo := repository.NewLocationsRepositoryImpl() // Mock your repository implementation for testing
+	controller := controllers.NewLocationsController(&repo)
+
+	app := fiber.New()
+	app.Get("/locations/search", controller.GetLocationsBySearch)
+
+	t.Run("GetLocationsBySearch_ValidSearch_Success", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/locations/search?search=ROOT", nil)
+		resp, err := app.Test(req)
+
+		// Чтение тела ответа
+		body, err := ioutil.ReadAll(resp.Body)
+		assert.NoError(t, err)
+
+		// Распарсить JSON из тела ответа
+		var location map[string]interface{}
+		err = json.Unmarshal(body, &location)
+		assert.NoError(t, err)
+
+		// Проверить ожидаемые поля в JSON
+		expectedID := 1
+		actualID := int(location["id"].(float64))
+		assert.Equal(t, expectedID, actualID)
+		expectedName := "ROOT"
+		actualName := location["name"]
+		assert.Equal(t, expectedName, actualName)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+	})
+
+	t.Run("GetLocationsBySearch_EmptySearch_BadRequest", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/locations/search", nil)
+		resp, err := app.Test(req)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 	})
 }
