@@ -1,14 +1,18 @@
 package controllers
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
-	"strconv"
 	"threebaristas.com/purple/app/core/services"
+	"threebaristas.com/purple/app/repository"
 )
 
 type AdminController struct {
 	service *services.PriceService
+	// REFACTOR: add some kind of service
+	storageRepo *repository.MatricesMappingStorage
 }
 
 func NewAdminController(
@@ -192,4 +196,15 @@ type GetRulesResponse struct {
 	TotalPage int64     `json:"totalPages"`
 	Page      int64     `json:"page"`
 	PageSize  int64     `json:"pageSize"`
+}
+
+func (a *AdminController) SetUpStorage(c *fiber.Ctx) error {
+	var payload repository.SetUpStorageRequest
+
+	if err := c.BodyParser(&payload); err != nil {
+		c.SendStatus(400)
+		return err
+	}
+
+	return (*a.storageRepo).SetUpStorage(&payload)
 }
