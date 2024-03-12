@@ -18,6 +18,6 @@ export type Request = {
 
 export async function getPrice(request: Request): Promise<Response> {
   const query = qs.stringify(request)
-  const data = await axiosInstance.get<Response>(`/price?${query}`)
+  const data = await axiosInstance.get<Response>(`/admin/price?${query}`)
   return data.data
 }
