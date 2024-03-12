@@ -90,36 +90,34 @@ func GetCategoryTreeExample() *Category {
 	return GetCategoryTreeHuge()
 }
 
-
 func GetCategoryTreeHuge() *Category {
-  logger, _ := zap.NewProduction()
-  defer logger.Sync()
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
 
-  logger.Info("Started generating categories tree")
-  const h = 4
-  const nodesOnLevel = 10
-  var id int64 = 2;
-  // Total length of 10^4 = 10_000
+	logger.Info("Started generating categories tree")
+	const h = 4
+	const nodesOnLevel = 10
+	var id int64 = 2
+	// Total length of 10^4 = 10_000
 
-  var generate func (c *Category, hCur int)
-  generate = func (c *Category, hCur int) {
-    if(hCur == 0) {
-      return
-    }
-    for i := 0; i < nodesOnLevel; i++ {
-      c.addChild(id, fmt.Sprintf("Category #%d", id))
-      id++;
-      generate(c, hCur - 1)
-    }
-  }
+	var generate func(c *Category, hCur int)
+	generate = func(c *Category, hCur int) {
+		if hCur == 0 {
+			return
+		}
+		for i := 0; i < nodesOnLevel; i++ {
+			c.addChild(id, fmt.Sprintf("Category #%d", id))
+			id++
+			generate(c, hCur-1)
+		}
+	}
 
-
-  // Total of 10_000 nodes
-  root := emptyCategory(1, "ROOT", nil)
-  logger.Info("Started generating categories tree")
-  generate(&root, h);
-  logger.Info("Generated categoires tree. Traversing it to find len")
-  arr := root.traverse()
-  logger.Info("Traversed categories tree", zap.Int("len", len(arr)))
-  return &root
+	// Total of 10_000 nodes
+	root := emptyCategory(1, "ROOT", nil)
+	logger.Info("Started generating categories tree")
+	generate(&root, h)
+	logger.Info("Generated categoires tree. Traversing it to find len")
+	arr := root.traverse()
+	logger.Info("Traversed categories tree", zap.Int("len", len(arr)))
+	return &root
 }

@@ -13,28 +13,42 @@ type LocationsRepository interface {
 }
 type LocationsRepositoryImpl struct {
 	LocationRoot *models.Location
+	asMap        map[int64]*models.Location
+	asList       []*models.Location
 }
 
 func NewLocationsRepositoryImpl() LocationsRepository {
+	root := models.GetLocationTreeExample()
+	asList := root.Traverse()
+	asMap := make(map[int64]*models.Location)
+	for _, node := range asList {
+		asMap[node.ID] = node
+	}
+
 	return &LocationsRepositoryImpl{
-		LocationRoot: models.GetLocationTreeExample(),
+		LocationRoot: root,
+		asList:       asList,
+		asMap:        asMap,
 	}
 }
 
+/**
+ * Returns a location with such id or an error if no location exists. It works in O(1).
+ **/
 func (r *LocationsRepositoryImpl) GetLocationByID(id int64) (*models.Location, error) {
-	list := r.LocationRoot.Traverse()
-	for _, category := range list {
-		if category.ID == id {
-			return category, nil
-		}
+	res, ok := r.asMap[id]
+	if ok {
+		return res, nil
 	}
 	return nil, errors.New("Not found")
 }
 
+/**
+ * Returns locations which names contain given string. It works in O(n)
+ **/
 func (r *LocationsRepositoryImpl) GetByString(s string, max int) ([]*models.Location, error) {
-	list := r.LocationRoot.Traverse()
 	var filtered []*models.Location
-	for _, category := range list {
+	for _, category := range r.asList {
 		if strings.Contains(strings.ToLower(category.Name), strings.ToLower(s)) {
 			filtered = append(filtered, category)
 		}

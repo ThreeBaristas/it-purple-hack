@@ -12,10 +12,10 @@ type InlineMappingStorage struct {
 }
 
 func DefaultInlineMappingStorage() MatricesMappingStorage {
-  return &InlineMappingStorage {
-    baselineMatrix: 0,
-    discounts: make(map[int64]int64),
-  }
+	return &InlineMappingStorage{
+		baselineMatrix: 0,
+		discounts:      make(map[int64]int64),
+	}
 }
 
 func (i *InlineMappingStorage) SegmentToMatrix(segmentId int64) (int64, bool) {
@@ -36,8 +36,8 @@ type DiscountMappingDTO struct {
 }
 
 type SetUpStorageRequest struct {
-  BaselineMatrix int64                `json:"baseline_matrix_id"`
-  Discounts      []DiscountMappingDTO `json:"discounts"`
+	BaselineMatrix int64                `json:"baseline_matrix_id"`
+	Discounts      []DiscountMappingDTO `json:"discounts"`
 }
 
 func (i *InlineMappingStorage) SetUpStorage(req *SetUpStorageRequest) error {

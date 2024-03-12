@@ -34,13 +34,13 @@ func NewPriceService(
 	categoriesRepo *repository.CategoriesRepository,
 	locationsRepo *repository.LocationsRepository,
 	priceRepo *repository.PriceRepository,
-	storage        *repository.MatricesMappingStorage,
+	storage *repository.MatricesMappingStorage,
 ) PriceService {
 	return PriceService{
 		categoriesRepo: categoriesRepo,
 		locationsRepo:  locationsRepo,
 		priceRepo:      priceRepo,
-    storage: storage,
+		storage:        storage,
 	}
 }
 
@@ -90,10 +90,12 @@ func (a *PriceService) GetRules(req GetPricesRequest) (*GetRulesResponse, error)
 }
 
 func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds []int64) (*repository.GetPriceResponse, error) {
+  // O(1)
 	location, _ := (*a.locationsRepo).GetLocationByID(locationId)
 	if location == nil {
 		return nil, errors.New("Location not found")
 	}
+  // O(1)
 	category, _ := (*a.categoriesRepo).GetCategoryByID(categoryId)
 	if category == nil {
 		return nil, errors.New("Category not found")
@@ -103,17 +105,20 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds 
 	var locations []*models.Location
 	var categories []*models.Category
 
+  // O(h_1)
 	locationCur := location
 	for locationCur != nil {
 		locations = append(locations, locationCur)
 		locationCur = locationCur.Parent
 	}
+  // O(h_2)
 	categoryCur := category
 	for categoryCur != nil {
 		categories = append(categories, categoryCur)
 		categoryCur = categoryCur.Parent
 	}
 
+  // O(h_1 + h_2)
 	req := formBatchRequest(locations, categories)
 	var matricesIds []int64
 	for _, value := range segmentsIds {
@@ -125,11 +130,13 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds 
 	}
 	req.Matrices = matricesIds
 
+  // Response has a length of O(h^2)
 	response, err := (*a.priceRepo).GetPricesBatch(req)
 	if err != nil {
 		return nil, err
 	}
 
+  // O(h^4) (!!!)
 	firstGoodNode := findFirstNode(locations, categories, response)
 
 	return firstGoodNode, nil
@@ -158,8 +165,11 @@ func formBatchRequest(locations []*models.Location, categories []*models.Categor
  * @param `response` - array of prices for pairs of `category` and `location`. This array is ordered by `MatrixId` in descending order
  **/
 func findFirstNode(locations []*models.Location, categories []*models.Category, response []repository.GetPriceResponse) *repository.GetPriceResponse {
+  // O(h) for this array
 	for _, loc := range locations {
+    // O(h) for this array
 		for _, cat := range categories {
+      // O(h^2) to find
 			res := findInResponse(loc, cat, response)
 			if res != nil {
 				return res

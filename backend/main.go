@@ -30,7 +30,7 @@ func main() {
 	cR := repository.NewCategoriesRepositoryImpl()
 	lR := repository.NewLocationsRepositoryImpl()
 	pR := repository.NewPostgresPriceRepository(db)
-  storage := repository.DefaultInlineMappingStorage()
+	storage := repository.DefaultInlineMappingStorage()
 
 	app := fiber.New()
 
