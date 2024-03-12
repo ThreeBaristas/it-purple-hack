@@ -1,5 +1,7 @@
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { Eye, Trash } from 'lucide-react'
 
+import { GetRulesRequest } from '@/shared/api'
 import { Button } from '@/shared/ui'
 import {
   Table,
@@ -10,9 +12,11 @@ import {
   TableRow
 } from '@/shared/ui/table'
 
+import { getRulesQueryOptions } from '../api'
 import { Rule } from '../model'
 
-export function RulesTable({ rows }: { rows: Rule[] }) {
+export function RulesTable({ request }: { request: GetRulesRequest }) {
+  const { data } = useSuspenseQuery(getRulesQueryOptions(request))
   return (
     <Table>
       <TableHeader>
@@ -25,7 +29,7 @@ export function RulesTable({ rows }: { rows: Rule[] }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {rows.map((it) => (
+        {data.data.map((it) => (
           <RuleRow
             key={`${it.location.id}${it.category.id}${it.segment}`}
             rule={it}
