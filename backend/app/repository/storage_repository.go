@@ -29,8 +29,8 @@ type DiscountMappingDTO struct {
 }
 
 type SetUpStorageRequest struct {
-	BaselineMatrix int64                `json:"baseline_matrix_id"`
-	Discounts      []DiscountMappingDTO `json:"discounts"`
+  BaselineMatrix int64                `json:"baseline_matrix_id"`
+  Discounts      []DiscountMappingDTO `json:"discounts"`
 }
 
 func (i *InlineMappingStorage) SetUpStorage(req *SetUpStorageRequest) error {
