@@ -8,7 +8,7 @@ import { RulesPageComponent } from './ui'
 
 const schema = object({
   page: fallback(number(), 0),
-  pageSize: fallback(number(), 10)
+  pageSize: fallback(number(), 2)
 })
 
 export const rulesRoute = createRoute({

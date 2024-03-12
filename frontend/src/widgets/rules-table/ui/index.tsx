@@ -1,8 +1,10 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Eye, Trash } from 'lucide-react'
+import React from 'react'
 
 import { GetRulesRequest } from '@/shared/api'
 import { Button } from '@/shared/ui'
+import { Skeleton } from '@/shared/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -15,7 +17,7 @@ import {
 import { getRulesQueryOptions } from '../api'
 import { Rule } from '../model'
 
-export function RulesTable({ request }: { request: GetRulesRequest }) {
+function RulesTable({ request }: { request: GetRulesRequest }) {
   const { data } = useSuspenseQuery(getRulesQueryOptions(request))
   return (
     <Table>
@@ -37,6 +39,51 @@ export function RulesTable({ request }: { request: GetRulesRequest }) {
         ))}
       </TableBody>
     </Table>
+  )
+}
+
+function RulesTableFallback({ nRows }: { nRows: number }) {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Локация</TableHead>
+          <TableHead>Категория</TableHead>
+          <TableHead>Сегмент</TableHead>
+          <TableHead>Цена</TableHead>
+          <TableHead>Действия</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {new Array(nRows).fill(0).map((_, ind) => (
+          <TableRow key={ind}>
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-8 w-full" />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  )
+}
+
+const RulesTableContainer = ({ request }: { request: GetRulesRequest }) => {
+  return (
+    <React.Suspense fallback={<RulesTableFallback nRows={10} />}>
+      <RulesTable request={request} />
+    </React.Suspense>
   )
 }
 
@@ -63,3 +110,5 @@ function RuleRow({ rule }: { rule: Rule }) {
     </TableRow>
   )
 }
+
+export { RulesTableContainer as RulesTable }
