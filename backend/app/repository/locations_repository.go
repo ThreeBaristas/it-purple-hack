@@ -32,6 +32,9 @@ func NewLocationsRepositoryImpl() LocationsRepository {
 	}
 }
 
+/**
+ * Returns a location with such id or an error if no location exists. It works in O(1).
+ **/
 func (r *LocationsRepositoryImpl) GetLocationByID(id int64) (*models.Location, error) {
 	res, ok := r.asMap[id]
 	if ok {
@@ -40,6 +43,9 @@ func (r *LocationsRepositoryImpl) GetLocationByID(id int64) (*models.Location, e
 	return nil, errors.New("Not found")
 }
 
+/**
+ * Returns locations which names contain given string. It works in O(n)
+ **/
 func (r *LocationsRepositoryImpl) GetByString(s string, max int) ([]*models.Location, error) {
 	var filtered []*models.Location
 	for _, category := range r.asList {

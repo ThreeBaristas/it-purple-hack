@@ -32,6 +32,9 @@ func NewCategoriesRepositoryImpl() CategoriesRepository {
 	}
 }
 
+/**
+ * Returns a category with such id or an error if no category exists. It works in O(1).
+ **/
 func (r *CategoriesRepositoryImpl) GetCategoryByID(id int64) (*models.Category, error) {
 	res, ok := r.asMap[id]
 	if !ok {
@@ -40,6 +43,9 @@ func (r *CategoriesRepositoryImpl) GetCategoryByID(id int64) (*models.Category, 
 	return res, nil
 }
 
+/**
+ * Returns categories whose name contain given string. It works in O(n)
+ **/
 func (r *CategoriesRepositoryImpl) GetByString(s string, max int) ([]*models.Category, error) {
 	var ans []*models.Category
 	for _, node := range r.asList {
