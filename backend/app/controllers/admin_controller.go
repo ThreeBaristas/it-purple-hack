@@ -166,6 +166,8 @@ func (a *AdminController) GetRules(c *fiber.Ctx) error {
 	return c.JSON(GetRulesResponse{
 		Data:      dtosArray,
 		TotalPage: int64(rules.TotalPages),
+		Page:      page,
+		PageSize:  pageSize,
 	})
 }
 
@@ -179,4 +181,6 @@ type RuleDTO struct {
 type GetRulesResponse struct {
 	Data      []RuleDTO `json:"data"`
 	TotalPage int64     `json:"totalPages"`
+	Page      int64     `json:"page"`
+	PageSize  int64     `json:"pageSize"`
 }

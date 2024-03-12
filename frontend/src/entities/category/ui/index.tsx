@@ -65,7 +65,10 @@ const SelectCategory = forwardRef<React.ComponentRef<typeof Button>, Props>(
                   <CommandItem
                     key={category.id}
                     value={String(category.id)}
-                    onSelect={() => onChange(category)}
+                    onSelect={() => {
+                      onChange(category)
+                      setOpen(false)
+                    }}
                   >
                     {category.name}
                     <CheckIcon

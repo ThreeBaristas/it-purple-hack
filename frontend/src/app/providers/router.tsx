@@ -3,10 +3,18 @@ import {
   RouterProvider as TanstackRouterProvider
 } from '@tanstack/react-router'
 
-import { routeTree } from '@/pages/root'
+import { indexRoute } from '@/pages/admin'
+import { priceRoute } from '@/pages/price'
+import { rootRoute } from '@/pages/root'
+import { rulesRoute } from '@/pages/rules'
 
 import { client } from './query'
 
+export const routeTree = rootRoute.addChildren([
+  indexRoute,
+  priceRoute,
+  rulesRoute
+])
 
 const router = createRouter({
   routeTree,
