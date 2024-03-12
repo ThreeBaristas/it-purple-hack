@@ -11,6 +11,13 @@ type InlineMappingStorage struct {
 	discounts      map[int64]int64
 }
 
+func DefaultInlineMappingStorage() MatricesMappingStorage {
+  return &InlineMappingStorage {
+    baselineMatrix: 0,
+    discounts: make(map[int64]int64),
+  }
+}
+
 func (i *InlineMappingStorage) SegmentToMatrix(segmentId int64) (int64, bool) {
 	if segmentId == 0 {
 		return i.baselineMatrix, true
