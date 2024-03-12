@@ -11,9 +11,10 @@ type Response = {
 }
 
 export type Request = {
-  location_id?: number
-  category_id?: number
-} & ({ segment_id?: number } | { user_id?: number })
+  location_id: number
+  category_id: number
+  segment_id: number
+}
 
 export async function getPrice(request: Request): Promise<Response> {
   const query = qs.stringify(request)

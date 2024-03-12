@@ -101,8 +101,8 @@ function RuleRow({ rule }: { rule: Rule }) {
       to: '/price',
       search: {
         segment_id: rule.segment,
-        location_id: rule.location.id,
-        category_id: rule.category.id
+        location: rule.location,
+        category: rule.category
       }
     })
   }

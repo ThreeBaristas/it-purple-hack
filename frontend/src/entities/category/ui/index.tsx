@@ -24,7 +24,7 @@ type Props = Omit<
   'value' | 'onChange'
 > & {
   value: Category | undefined
-  onChange: (value: Category | undefined) => void
+  onChange: (value: Category) => void
 }
 
 const SelectCategory = forwardRef<React.ComponentRef<typeof Button>, Props>(

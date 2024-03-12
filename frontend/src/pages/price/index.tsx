@@ -1,23 +1,50 @@
 import { valibotResolver } from '@hookform/resolvers/valibot'
+import { queryOptions } from '@tanstack/react-query'
 import { createRoute } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
-import { number, object, type Output, parse, partial } from 'valibot'
+import {
+  coerce,
+  number,
+  object,
+  type Output,
+  parse,
+  partial,
+  string
+} from 'valibot'
 
-import { getLocationsQueryOptions } from '@/entities/location/api'
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui'
+import { SelectCategory } from '@/entities/category'
+import { SelectLocation } from '@/entities/location'
+import { getPrice } from '@/shared/api'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/shared/ui'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel
+} from '@/shared/ui/form'
+import { Input } from '@/shared/ui/input'
 
 import { rootRoute } from '../root'
-import { getPriceQueryOptions } from './api'
+import { getPriceQueryOptions, useSavePriceMutation } from './api'
 
 const locationSchema = object({
   id: number(),
-  name: number()
+  name: string()
 })
 
 export const priceFormSchema = object({
   location: locationSchema,
   category: locationSchema,
-  segment_id: number()
+  segment_id: coerce(number(), Number),
+  price: coerce(number(), Number)
 })
 
 export const priceSearchSchema = partial(priceFormSchema)
@@ -30,15 +57,47 @@ export const priceRoute = createRoute({
   path: '/price',
   validateSearch: (data) => parse(priceSearchSchema, data),
   loaderDeps: ({ search }) => ({ search }),
-  loader: ({ deps, context: { queryClient } }) => {
-    return queryClient.ensureQueryData(getPriceQueryOptions(deps.search))
+  loader: ({ context: { queryClient }, deps }) => {
+    const categoryId = deps.search.category?.id
+    const locationId = deps.search.location?.id
+    const segment = deps.search.segment_id
+    if (
+      categoryId != undefined &&
+      locationId != undefined &&
+      segment != undefined
+    ) {
+      return queryClient.ensureQueryData(
+        getPriceQueryOptions({
+          category_id: categoryId,
+          location_id: locationId,
+          segment_id: segment
+        })
+      )
+    }
   }
 })
 
 export function PriceRouteComponent() {
+  const price = priceRoute.useLoaderData()
+  const search = priceRoute.useSearch()
   const form = useForm<Output<typeof priceFormSchema>>({
-    resolver: valibotResolver(priceFormSchema)
+    resolver: valibotResolver(priceFormSchema),
+    defaultValues: {
+      ...search,
+      price: price?.price
+    }
   })
+
+  const { mutate, isPending } = useSavePriceMutation()
+
+  function handleSubmit(values: Output<typeof priceFormSchema>) {
+    mutate({
+      location_id: values.location.id,
+      category_id: values.category.id,
+      price: values.price,
+      segment_id: values.segment_id
+    })
+  }
 
   return (
     <div>
@@ -46,7 +105,69 @@ export function PriceRouteComponent() {
         <CardHeader>
           <CardTitle>Изменение цены</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4"></CardContent>
+        <CardContent className="space-y-4">
+          <Form {...form}>
+            <form
+              id="price-route-form"
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-4"
+            >
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Категория</FormLabel>
+                    <FormControl>
+                      <SelectCategory {...field} className="w-full" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Локация</FormLabel>
+                    <FormControl>
+                      <SelectLocation {...field} className="w-full" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="segment_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Сегмент</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Цена</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </CardContent>
+        <CardFooter>
+          <Button type="submit" form="price-route-form" disabled={isPending}>
+            Сохранить
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   )
