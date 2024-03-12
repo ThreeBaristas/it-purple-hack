@@ -194,11 +194,3 @@ func (a *PriceService) findFirstNode(locations []*models.Location, categories []
 	return answer
 }
 
-func findInResponse(location *models.Location, category *models.Category, response []repository.GetPriceResponse) *repository.GetPriceResponse {
-	for _, elem := range response {
-		if elem.LocationId == location.ID && elem.CategoryId == category.ID {
-			return &elem
-		}
-	}
-	return nil
-}
