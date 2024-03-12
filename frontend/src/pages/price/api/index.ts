@@ -1,11 +1,35 @@
-import { queryOptions } from '@tanstack/react-query'
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient
+} from '@tanstack/react-query'
+import QueryString from 'qs'
 
-import { getPrice } from '@/shared/api'
+import { getPrice, type GetPriceRequest } from '@/shared/api'
+import { axiosInstance } from '@/shared/api/axios'
 
-import { PriceRequest } from '..'
-
-export const getPriceQueryOptions = (req: PriceRequest) =>
+export const getPriceQueryOptions = (req: GetPriceRequest) =>
   queryOptions({
     queryKey: ['price', req],
     queryFn: () => getPrice(req)
   })
+
+type SaveReq = {
+  location_id: number
+  category_id: number
+  segment_id: number
+  price: number
+}
+
+export function useSavePriceMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (req: SaveReq) => {
+      const qs = QueryString.stringify(req)
+      return axiosInstance.put('/admin/price?' + qs)
+    },
+    onMutate: () => {
+      queryClient.invalidateQueries({ queryKey: ['rules'] })
+    }
+  })
+}

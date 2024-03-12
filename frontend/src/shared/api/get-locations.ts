@@ -8,26 +8,15 @@ type LocationDTO = {
 type Response = Array<LocationDTO>
 
 export async function getLocations(query?: string): Promise<Response> {
-  if (process.env.NODE_ENV === 'production') {
-    let qs = ''
-    if (query) {
-      qs += `?search=${query}`
-    }
-    const response = await axiosInstance.get<Response>(`/locations${qs}`)
-    return response.data
+  let qs = ''
+  if (query) {
+    qs += `?search=${query}`
   }
-  await new Promise((r) => setTimeout(r, 500))
-  const data: Response = [
-    {
-      id: 1,
-      name: 'Санкт-Петербург'
-    },
-    {
-      id: 2,
-      name: 'Москва'
-    }
-  ]
-  return data.filter((it) =>
-    it.name.toLowerCase().includes(query?.toLocaleLowerCase() ?? '')
-  )
+  const response = await axiosInstance.get<Response>(`/locations${qs}`)
+  return response.data
+}
+
+export async function getLocation(id: number): Promise<LocationDTO> {
+  const response = await axiosInstance.get<LocationDTO>(`/locations/${id}`)
+  return response.data
 }

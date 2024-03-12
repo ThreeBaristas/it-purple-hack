@@ -24,7 +24,7 @@ type Props = Omit<
   'value' | 'onChange'
 > & {
   value: Location | undefined
-  onChange: (value: Location | undefined) => void
+  onChange: (value: Location) => void
 }
 
 const SelectLocation = React.forwardRef<
