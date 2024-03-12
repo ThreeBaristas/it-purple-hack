@@ -1,4 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import { Eye, Trash } from 'lucide-react'
 import React from 'react'
 
@@ -88,6 +89,19 @@ const RulesTableContainer = ({ request }: { request: GetRulesRequest }) => {
 }
 
 function RuleRow({ rule }: { rule: Rule }) {
+  const navigate = useNavigate({})
+
+  function goToRule() {
+    navigate({
+      to: '/price',
+      search: {
+        segment_id: rule.segment,
+        location_id: rule.location.id,
+        category_id: rule.category.id
+      }
+    })
+  }
+
   return (
     <TableRow>
       <TableCell>{rule.location.name}</TableCell>
@@ -100,7 +114,12 @@ function RuleRow({ rule }: { rule: Rule }) {
         }).format(rule.price)}
       </TableCell>
       <TableCell>
-        <Button variant="outline" size="icon" className="size-8">
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-8"
+          onClick={() => goToRule()}
+        >
           <Eye className="size-4" />
         </Button>
         <Button variant="destructive" size="icon" className="ml-2 size-8">

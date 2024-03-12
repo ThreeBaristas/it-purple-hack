@@ -29,7 +29,7 @@ export const priceRoute = createRoute({
 export function PriceRouteComponent() {
   const {
     location_id,
-    microcategory_id: category_id,
+    category_id,
     user_segment_id: segment_id,
     matrix_id,
     price
@@ -40,16 +40,16 @@ export function PriceRouteComponent() {
     <div>
       <Card className="mx-auto max-w-md">
         <CardHeader>
-          <CardTitle>Отчет по цене</CardTitle>
+          <CardTitle>Изменение цены</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
             <Label>Категория</Label>
-            <p>Категория #{category_id ?? 'Н/А'}</p>
+            <p>Категория #{category_id != undefined ? category_id : 'Н/А'}</p>
           </div>
           <div>
             <Label>Локация</Label>
-            <p>Локация #{location_id ?? 'Н/А'}</p>
+            <p>Локация #{location_id != undefined ? location_id : 'Н/А'}</p>
           </div>
           {user_id != undefined ? (
             <div>
