@@ -30,7 +30,12 @@ func (r *CategoriesRepositoryImpl) GetCategoryByID(id int64) (*models.Category, 
 }
 
 func (r *CategoriesRepositoryImpl) GetByString(s string, max int) ([]*models.Category, error) {
-	return r.root.FindAllByPredicate(func(c *models.Category) bool {
+  arr := r.root.FindAllByPredicate(func(c *models.Category) bool {
 		return strings.Contains(strings.ToLower(c.Name), strings.ToLower(s))
-	}), nil
+	})
+  var newArr []*models.Category
+  for i := 0; i < min(len(arr), max); i++ {
+    newArr=append(newArr, arr[i])
+  }
+  return newArr, nil
 }
