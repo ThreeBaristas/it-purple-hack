@@ -22,7 +22,7 @@ func emptyCategory(id int64, name string, parent *Category) Category {
 		Parent:   parent,
 		Children: nil,
 	}
-  if parent.Parent != nil {
+  if parent != nil {
     category.DistToRoot = parent.DistToRoot + 1
   }
   return category
