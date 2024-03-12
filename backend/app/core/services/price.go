@@ -10,6 +10,7 @@ type PriceService struct {
 	categoriesRepo *repository.CategoriesRepository
 	locationsRepo  *repository.LocationsRepository
 	priceRepo      *repository.PriceRepository
+	storage        *repository.MatricesMappingStorage
 }
 
 type PriceRule struct {
@@ -33,20 +34,30 @@ func NewPriceService(
 	categoriesRepo *repository.CategoriesRepository,
 	locationsRepo *repository.LocationsRepository,
 	priceRepo *repository.PriceRepository,
+	storage        *repository.MatricesMappingStorage,
 ) PriceService {
 	return PriceService{
 		categoriesRepo: categoriesRepo,
 		locationsRepo:  locationsRepo,
 		priceRepo:      priceRepo,
+    storage: storage,
 	}
 }
 
 func (a *PriceService) SetPrice(locationId int64, categoryId int64, segmentsId int64, price int64) (*repository.GetPriceResponse, error) {
-	return (*a.priceRepo).SetPrice(locationId, categoryId, segmentsId, price)
+	matrixId, ok := (*a.storage).SegmentToMatrix(segmentsId)
+	if !ok {
+		return nil, errors.New("Segment not found")
+	}
+	return (*a.priceRepo).SetPrice(locationId, categoryId, matrixId, price)
 }
 
 func (a *PriceService) DeletePrice(locationId int64, categoryId int64, segmentId int64) (bool, error) {
-	return (*a.priceRepo).DeletePrice(locationId, categoryId, segmentId)
+	matrixId, ok := (*a.storage).SegmentToMatrix(segmentId)
+	if !ok {
+		return false, errors.New("Segment not found")
+	}
+	return (*a.priceRepo).DeletePrice(locationId, categoryId, matrixId)
 }
 
 func (a *PriceService) GetRules(req GetPricesRequest) (*GetRulesResponse, error) {
@@ -106,7 +117,11 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds 
 	req := formBatchRequest(locations, categories)
 	var matricesIds []int64
 	for _, value := range segmentsIds {
-		matricesIds = append(matricesIds, a.SegmentToMatrixId(value))
+		matrixId, ok := (*a.storage).SegmentToMatrix(value)
+		if !ok {
+			return nil, errors.New("Segment not found")
+		}
+		matricesIds = append(matricesIds, matrixId)
 	}
 	req.Matrices = matricesIds
 
@@ -118,10 +133,6 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds 
 	firstGoodNode := findFirstNode(locations, categories, response)
 
 	return firstGoodNode, nil
-}
-
-func (a *PriceService) SegmentToMatrixId(segmentId int64) int64 {
-	return segmentId
 }
 
 func formBatchRequest(locations []*models.Location, categories []*models.Category) *repository.GetPriceRequest {

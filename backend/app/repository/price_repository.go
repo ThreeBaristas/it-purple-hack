@@ -21,8 +21,8 @@ type GetPriceResponse struct {
 
 type PriceRepository interface {
 	GetPricesBatch(nodes *GetPriceRequest) ([]GetPriceResponse, error)
-	SetPrice(locationId int64, categoryId int64, segmentId int64, price int64) (*GetPriceResponse, error)
-	DeletePrice(locationId int64, categoryId int64, segmentId int64) (bool, error)
+	SetPrice(locationId int64, categoryId int64, matrixId int64, price int64) (*GetPriceResponse, error)
+	DeletePrice(locationId int64, categoryId int64, matrixId int64) (bool, error)
 	GetRules(pageSize int32, page int64) ([]GetPriceResponse, int, error)
 }
 
@@ -62,21 +62,21 @@ func (r *PostgresPriceRepository) GetPricesBatch(req *GetPriceRequest) ([]GetPri
 	return ans, nil
 }
 
-func (r *PostgresPriceRepository) SetPrice(locationId int64, categoryId int64, segmentId int64, price int64) (*GetPriceResponse, error) {
-	_, err := r.db.Exec("INSERT INTO prices (location_id, category_id, matrix_id, price) VALUES ($1, $2, $3, $4) ON CONFLICT (category_id, location_id, matrix_id) DO UPDATE SET price = $4", locationId, categoryId, segmentId, price)
+func (r *PostgresPriceRepository) SetPrice(locationId int64, categoryId int64, matrixid int64, price int64) (*GetPriceResponse, error) {
+	_, err := r.db.Exec("INSERT INTO prices (location_id, category_id, matrix_id, price) VALUES ($1, $2, $3, $4) ON CONFLICT (category_id, location_id, matrix_id) DO UPDATE SET price = $4", locationId, categoryId, matrixid, price)
 	if err != nil {
 		return nil, err
 	}
 	return &GetPriceResponse{
 		LocationId: locationId,
 		CategoryId: categoryId,
-		MatrixId:   segmentId,
+		MatrixId:   matrixid,
 		Price:      price,
 	}, nil
 }
 
-func (r *PostgresPriceRepository) DeletePrice(locationId int64, categoryId int64, segmentId int64) (bool, error) {
-	res, err := r.db.Exec("DELETE FROM prices WHERE location_id = $1 AND category_id = $2 AND matrix_id = $3", locationId, categoryId, segmentId)
+func (r *PostgresPriceRepository) DeletePrice(locationId int64, categoryId int64, matrixId int64) (bool, error) {
+	res, err := r.db.Exec("DELETE FROM prices WHERE location_id = $1 AND category_id = $2 AND matrix_id = $3", locationId, categoryId, matrixId)
 	if err != nil {
 		return false, err
 	}

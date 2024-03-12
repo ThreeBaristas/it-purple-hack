@@ -30,6 +30,7 @@ func main() {
 	cR := repository.NewCategoriesRepositoryImpl()
 	lR := repository.NewLocationsRepositoryImpl()
 	pR := repository.NewPostgresPriceRepository(db)
+  storage := repository.DefaultInlineMappingStorage()
 
 	app := fiber.New()
 
@@ -37,10 +38,10 @@ func main() {
 		middleware.SwaggerMiddleware(app)
 	}
 
-	routes.AdminPanelRoutes(app, &cR, &lR, &pR)
+	routes.AdminPanelRoutes(app, &cR, &lR, &pR, &storage)
 	routes.CategoriesRoutes(app, &cR)
 	routes.LocationsRoutes(app, &lR)
-	routes.PriceRoutes(app, &cR, &lR, &pR)
+	routes.PriceRoutes(app, &cR, &lR, &pR, &storage)
 
 	logger.Info("Starting web server")
 	app.Listen(":3000")

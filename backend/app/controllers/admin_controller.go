@@ -1,21 +1,27 @@
 package controllers
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
-	"strconv"
 	"threebaristas.com/purple/app/core/services"
+	"threebaristas.com/purple/app/repository"
 )
 
 type AdminController struct {
 	service *services.PriceService
+	// REFACTOR: add some kind of service
+	storageRepo *repository.MatricesMappingStorage
 }
 
 func NewAdminController(
 	service *services.PriceService,
+  storageRepo *repository.MatricesMappingStorage,
 ) AdminController {
 	return AdminController{
 		service: service,
+    storageRepo: storageRepo,
 	}
 }
 
@@ -56,7 +62,7 @@ func (a *AdminController) GetPrice(c *fiber.Ctx) error {
 		"price":       resp.Price,
 		"category_id": resp.CategoryId,
 		"location_id": resp.LocationId,
-    "matrix_id": resp.MatrixId,
+		"matrix_id":   resp.MatrixId,
 	})
 }
 
@@ -75,7 +81,7 @@ func (a *AdminController) SetPrice(c *fiber.Ctx) error {
 	if err != nil {
 		logger.Error("Could not parse location_id", zap.Error(err))
 		c.SendStatus(400)
-    return c.SendString("Error! location_id is not a number")
+		return c.SendString("Error! location_id is not a number")
 	}
 
 	segmentId, err := strconv.ParseInt(c.Query("segment_id", "0"), 10, 64)
@@ -192,4 +198,15 @@ type GetRulesResponse struct {
 	TotalPage int64     `json:"totalPages"`
 	Page      int64     `json:"page"`
 	PageSize  int64     `json:"pageSize"`
+}
+
+func (a *AdminController) SetUpStorage(c *fiber.Ctx) error {
+	var payload repository.SetUpStorageRequest
+
+	if err := c.BodyParser(&payload); err != nil {
+		c.SendStatus(400)
+		return err
+	}
+
+	return (*a.storageRepo).SetUpStorage(&payload)
 }
