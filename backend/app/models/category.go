@@ -8,35 +8,35 @@ import (
 
 // Category представляет структуру для хранения информации о категории
 type Category struct {
-	ID       int64  `json:"id"`
-	Name     string `json:"name"`
-  DistToRoot int
-	Parent   *Category
-	Children []*Category
+	ID         int64  `json:"id"`
+	Name       string `json:"name"`
+	DistToRoot int
+	Parent     *Category
+	Children   []*Category
 }
 
 func emptyCategory(id int64, name string, parent *Category) Category {
-  category := Category{
+	category := Category{
 		ID:       id,
 		Name:     name,
 		Parent:   parent,
 		Children: nil,
 	}
-  if parent != nil {
-    category.DistToRoot = parent.DistToRoot + 1
-  }
-  return category
+	if parent != nil {
+		category.DistToRoot = parent.DistToRoot + 1
+	}
+	return category
 }
 
 // Creates a new category and adds it to given node.
 // Returns a newly created node
 func (c *Category) addChild(id int64, name string) *Category {
 	newCategory := Category{
-		ID:       id,
-		Name:     name,
-		Parent:   c,
-    DistToRoot: c.DistToRoot + 1,
-		Children: nil,
+		ID:         id,
+		Name:       name,
+		Parent:     c,
+		DistToRoot: c.DistToRoot + 1,
+		Children:   nil,
 	}
 	c.Children = append(c.Children, &newCategory)
 	return &newCategory

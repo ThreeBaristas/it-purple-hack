@@ -90,12 +90,12 @@ func (a *PriceService) GetRules(req GetPricesRequest) (*GetRulesResponse, error)
 }
 
 func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds []int64) (*repository.GetPriceResponse, error) {
-  // O(1)
+	// O(1)
 	location, _ := (*a.locationsRepo).GetLocationByID(locationId)
 	if location == nil {
 		return nil, errors.New("Location not found")
 	}
-  // O(1)
+	// O(1)
 	category, _ := (*a.categoriesRepo).GetCategoryByID(categoryId)
 	if category == nil {
 		return nil, errors.New("Category not found")
@@ -105,20 +105,20 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds 
 	var locations []*models.Location
 	var categories []*models.Category
 
-  // O(h_1)
+	// O(h_1)
 	locationCur := location
 	for locationCur != nil {
 		locations = append(locations, locationCur)
 		locationCur = locationCur.Parent
 	}
-  // O(h_2)
+	// O(h_2)
 	categoryCur := category
 	for categoryCur != nil {
 		categories = append(categories, categoryCur)
 		categoryCur = categoryCur.Parent
 	}
 
-  // O(h_1 + h_2)
+	// O(h_1 + h_2)
 	req := formBatchRequest(locations, categories)
 	var matricesIds []int64
 	for _, value := range segmentsIds {
@@ -130,13 +130,13 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds 
 	}
 	req.Matrices = matricesIds
 
-  // Response has a length of O(h^2)
+	// Response has a length of O(h^2)
 	response, err := (*a.priceRepo).GetPricesBatch(req)
 	if err != nil {
 		return nil, err
 	}
 
-  // O(h^2) (!!!)
+	// O(h^2) (!!!)
 	firstGoodNode := a.findFirstNode(locations, categories, response)
 
 	return firstGoodNode, nil
@@ -165,32 +165,32 @@ func formBatchRequest(locations []*models.Location, categories []*models.Categor
  * @param `response` - array of prices for pairs of `category` and `location`. This array is ordered by `MatrixId` in descending order
  **/
 func (a *PriceService) findFirstNode(locations []*models.Location, categories []*models.Category, response []repository.GetPriceResponse) *repository.GetPriceResponse {
-  // Сначала поднимаеся по категориям, потом по локациям.
-  // Поэтому первым делом выбираем пару, у которой локация дальше всего от корня 
-  maxLocation, _ := (*a.locationsRepo).GetLocationByID(response[0].LocationId)
-  for _, node := range response {
-    nodeLocation, _ := (*a.locationsRepo).GetLocationByID(node.LocationId)
-    if nodeLocation.DistToRoot > maxLocation.DistToRoot {
-      maxLocation = nodeLocation
-    }
-  }
+	// Сначала поднимаеся по категориям, потом по локациям.
+	// Поэтому первым делом выбираем пару, у которой локация дальше всего от корня
+	maxLocation, _ := (*a.locationsRepo).GetLocationByID(response[0].LocationId)
+	for _, node := range response {
+		nodeLocation, _ := (*a.locationsRepo).GetLocationByID(node.LocationId)
+		if nodeLocation.DistToRoot > maxLocation.DistToRoot {
+			maxLocation = nodeLocation
+		}
+	}
 
-  maxCategoryMaxLocation, _ := (*a.categoriesRepo).GetCategoryByID(response[0].CategoryId)
-  for _, node := range response {
-    nodeCategory, _ := (*a.categoriesRepo).GetCategoryByID(node.CategoryId)
-    if nodeCategory.DistToRoot > maxCategoryMaxLocation.DistToRoot {
-      maxCategoryMaxLocation = nodeCategory
-    }
-  }
+	maxCategoryMaxLocation, _ := (*a.categoriesRepo).GetCategoryByID(response[0].CategoryId)
+	for _, node := range response {
+		nodeCategory, _ := (*a.categoriesRepo).GetCategoryByID(node.CategoryId)
+		if nodeCategory.DistToRoot > maxCategoryMaxLocation.DistToRoot {
+			maxCategoryMaxLocation = nodeCategory
+		}
+	}
 
-  var answer *repository.GetPriceResponse = nil
-  for _, node := range response {
-    if node.CategoryId == maxCategoryMaxLocation.ID && node.LocationId == maxLocation.ID {
-      answer = &node
-      break
-    }
-  }
-  
+	var answer *repository.GetPriceResponse = nil
+	for _, node := range response {
+		if node.CategoryId == maxCategoryMaxLocation.ID && node.LocationId == maxLocation.ID {
+			answer = &node
+			break
+		}
+	}
+
 	return answer
 }
 
