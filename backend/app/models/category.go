@@ -10,17 +10,22 @@ import (
 type Category struct {
 	ID       int64  `json:"id"`
 	Name     string `json:"name"`
+  DistToRoot int
 	Parent   *Category
 	Children []*Category
 }
 
 func emptyCategory(id int64, name string, parent *Category) Category {
-	return Category{
+  category := Category{
 		ID:       id,
 		Name:     name,
 		Parent:   parent,
 		Children: nil,
 	}
+  if parent.Parent != nil {
+    category.DistToRoot = parent.DistToRoot + 1
+  }
+  return category
 }
 
 // Creates a new category and adds it to given node.
@@ -30,6 +35,7 @@ func (c *Category) addChild(id int64, name string) *Category {
 		ID:       id,
 		Name:     name,
 		Parent:   c,
+    DistToRoot: c.DistToRoot + 1,
 		Children: nil,
 	}
 	c.Children = append(c.Children, &newCategory)

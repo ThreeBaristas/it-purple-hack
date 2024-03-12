@@ -11,16 +11,21 @@ type Location struct {
 	ID       int64  `json:"id"`
 	Name     string `json:"name"`
 	Parent   *Location
+  DistToRoot int
 	Children []*Location
 }
 
 func emptyLocation(id int64, name string, parent *Location) Location {
-	return Location{
+  location := Location{
 		ID:       id,
 		Name:     name,
 		Parent:   parent,
 		Children: nil,
 	}
+  if location.Parent != nil {
+    location.DistToRoot = parent.DistToRoot + 1
+  }
+  return location
 }
 
 // Creates a new category and adds it to given node.
@@ -30,6 +35,7 @@ func (c *Location) addChild(id int64, name string) *Location {
 		ID:       id,
 		Name:     name,
 		Parent:   c,
+    DistToRoot: c.DistToRoot + 1,
 		Children: nil,
 	}
 	c.Children = append(c.Children, &newLocation)
