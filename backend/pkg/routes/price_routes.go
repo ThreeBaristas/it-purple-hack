@@ -7,7 +7,7 @@ import (
 	"threebaristas.com/purple/app/repository"
 )
 
-func PriceRoutes(a *fiber.App, cR *repository.CategoriesRepository, lR *repository.LocationsRepository, pR *repository.PriceRepository, storage * repository.MatricesMappingStorage) {
+func PriceRoutes(a *fiber.App, cR *repository.CategoriesRepository, lR *repository.LocationsRepository, pR *repository.PriceRepository, storage *repository.MatricesMappingStorage) {
 	service := services.NewPriceService(cR, lR, pR, storage)
 	segmentsService := services.NewGetUserSegmentsService()
 	controller := controllers.NewPriceController(&service, segmentsService)

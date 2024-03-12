@@ -17,11 +17,11 @@ type AdminController struct {
 
 func NewAdminController(
 	service *services.PriceService,
-  storageRepo *repository.MatricesMappingStorage,
+	storageRepo *repository.MatricesMappingStorage,
 ) AdminController {
 	return AdminController{
-		service: service,
-    storageRepo: storageRepo,
+		service:     service,
+		storageRepo: storageRepo,
 	}
 }
 

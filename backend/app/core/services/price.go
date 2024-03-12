@@ -34,13 +34,13 @@ func NewPriceService(
 	categoriesRepo *repository.CategoriesRepository,
 	locationsRepo *repository.LocationsRepository,
 	priceRepo *repository.PriceRepository,
-	storage        *repository.MatricesMappingStorage,
+	storage *repository.MatricesMappingStorage,
 ) PriceService {
 	return PriceService{
 		categoriesRepo: categoriesRepo,
 		locationsRepo:  locationsRepo,
 		priceRepo:      priceRepo,
-    storage: storage,
+		storage:        storage,
 	}
 }
 
