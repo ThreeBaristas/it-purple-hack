@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { Eye, Trash } from 'lucide-react'
+import { Edit, Trash } from 'lucide-react'
 import React from 'react'
 
 import { GetRulesRequest } from '@/shared/api'
@@ -125,7 +125,7 @@ function RuleRow({ rule }: { rule: Rule }) {
           className="size-8"
           onClick={() => goToRule()}
         >
-          <Eye className="size-4" />
+          <Edit className="size-4" />
         </Button>
         <Button
           variant="destructive"
