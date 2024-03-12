@@ -8,4 +8,3 @@ export const rootRoute = createRootRouteWithContext<{
 }>()({
   component: Layout
 })
-

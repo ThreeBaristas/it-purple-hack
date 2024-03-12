@@ -15,7 +15,7 @@ import {
   TableRow
 } from '@/shared/ui/table'
 
-import { getRulesQueryOptions } from '../api'
+import { getRulesQueryOptions, useDeletePriceMutation } from '../api'
 import { Rule } from '../model'
 
 function RulesTable({ request }: { request: GetRulesRequest }) {
@@ -90,6 +90,11 @@ const RulesTableContainer = ({ request }: { request: GetRulesRequest }) => {
 
 function RuleRow({ rule }: { rule: Rule }) {
   const navigate = useNavigate({})
+  const { mutate, isPending } = useDeletePriceMutation({
+    location_id: rule.location.id,
+    category_id: rule.category.id,
+    segment_id: rule.segment
+  })
 
   function goToRule() {
     navigate({
@@ -122,7 +127,13 @@ function RuleRow({ rule }: { rule: Rule }) {
         >
           <Eye className="size-4" />
         </Button>
-        <Button variant="destructive" size="icon" className="ml-2 size-8">
+        <Button
+          variant="destructive"
+          size="icon"
+          className="ml-2 size-8"
+          disabled={isPending}
+          onClick={() => mutate()}
+        >
           <Trash className="size-4" />
         </Button>
       </TableCell>

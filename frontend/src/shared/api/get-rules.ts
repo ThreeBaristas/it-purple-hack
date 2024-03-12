@@ -28,6 +28,14 @@ type Response = {
 
 export async function getRules(req: Request): Promise<Response> {
   const qs = QueryString.stringify(req)
-  const data = await axiosInstance.get<Response>('/admin/rules?' + qs)
-  return data.data
+  const { data } = await axiosInstance.get<
+    Omit<Response, 'data'> & { data: Array<RuleDTO> | undefined }
+  >('/admin/rules?' + qs)
+  const newData: Response = {
+    data: data.data ?? [],
+    page: data.page,
+    pageSize: data.pageSize,
+    totalPages: data.totalPages
+  }
+  return newData
 }

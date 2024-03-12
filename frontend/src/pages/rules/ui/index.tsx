@@ -17,7 +17,6 @@ import { rulesRoute } from '..'
 
 export function RulesPageComponent() {
   const request = rulesRoute.useSearch()
-  const response = rulesRoute.useLoaderData()
   return (
     <div className="space-y-4">
       <RulesTable request={request} />
@@ -65,7 +64,7 @@ function Pagination({ request }: { request: GetRulesRequest }) {
           variant="outline"
           disabled={!canGoPrevious}
           onClick={() => {
-            goToPage(request.page - 1)
+            goToPage(response.page - 1)
           }}
         >
           <ChevronLeft className="size-4" />
@@ -75,7 +74,7 @@ function Pagination({ request }: { request: GetRulesRequest }) {
           variant="outline"
           disabled={!canGoNext}
           onClick={() => {
-            goToPage(request.page + 1)
+            goToPage(response.page + 1)
           }}
         >
           <ChevronRight className="size-4" />
