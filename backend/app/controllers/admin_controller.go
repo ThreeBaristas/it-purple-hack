@@ -31,13 +31,21 @@ func (a *AdminController) GetPrice(c *fiber.Ctx) error {
 		c.SendStatus(400)
 		return c.SendString("Error! category_id is not a number")
 	}
+
 	locationId, err := strconv.ParseInt(c.Query("location_id", "NULL"), 10, 64)
 	if err != nil {
 		c.SendStatus(400)
 		return c.SendString("Error! location_id is not a number")
 	}
-	logger.Info("Handling /price request", zap.Int64("categoryId", categoryId), zap.Int64("locationId", locationId))
-	resp, err := a.service.GetPrice(locationId, categoryId, nil)
+
+	segmentId, err := strconv.ParseInt(c.Query("segment_id", "0"), 10, 64)
+	if err != nil {
+		c.SendStatus(400)
+		return c.SendString("Error! segment is not a number")
+	}
+
+	logger.Info("Handling /admin/price request", zap.Int64("categoryId", categoryId), zap.Int64("locationId", locationId), zap.Int64("segment_id", segmentId))
+	resp, err := a.service.GetPrice(locationId, categoryId, []int64{segmentId})
 	if err != nil {
 		c.SendStatus(500)
 		logger.Error("Could not compute price", zap.Error(err))
@@ -48,6 +56,7 @@ func (a *AdminController) GetPrice(c *fiber.Ctx) error {
 		"price":       resp.Price,
 		"category_id": resp.CategoryId,
 		"location_id": resp.LocationId,
+    "matrix_id": resp.MatrixId,
 	})
 }
 
@@ -66,7 +75,7 @@ func (a *AdminController) SetPrice(c *fiber.Ctx) error {
 	if err != nil {
 		logger.Error("Could not parse location_id", zap.Error(err))
 		c.SendStatus(400)
-		return c.SendString("Error! location_id is not a number")
+    return c.SendString("Error! location_id is not a number")
 	}
 
 	segmentId, err := strconv.ParseInt(c.Query("segment_id", "0"), 10, 64)
