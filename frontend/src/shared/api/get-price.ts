@@ -10,7 +10,7 @@ type Response = {
   user_segment_id: number
 }
 
-type Request = {
+export type Request = {
   location_id?: number
   category_id?: number
 } & ({ segment_id?: number } | { user_id?: number })

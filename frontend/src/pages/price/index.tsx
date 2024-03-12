@@ -6,6 +6,7 @@ import { Label } from '@/shared/ui/label'
 
 import { rootRoute } from '../root'
 import { getPriceQueryOptions } from './api'
+
 export const priceRouteSchema = object({
   location_id: optional(number()),
   category_id: optional(number()),
