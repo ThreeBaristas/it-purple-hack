@@ -23,7 +23,7 @@ type PriceRepository interface {
 	GetPricesBatch(nodes *GetPriceRequest) ([]GetPriceResponse, error)
 	SetPrice(locationId int64, categoryId int64, matrixId int64, price int64) (*GetPriceResponse, error)
 	DeletePrice(locationId int64, categoryId int64, matrixId int64) (bool, error)
-	GetRules(pageSize int32, page int64) ([]GetPriceResponse, int, error)
+  GetRules(pageSize int32, page int64) ([]GetPriceResponse, int, error)
 }
 
 type PostgresPriceRepository struct {

@@ -63,7 +63,17 @@ func (a *PriceController) GetPrice(c *fiber.Ctx) error {
 		return c.SendString("Error. could not get segments" + err.Error())
 	}
 
-	resp, err := a.priceService.GetPrice(locationId, categoryId, segments)
+  var matrices []int64
+  for _, segment := range segments {
+    value, ok := (*a.mapper).SegmentToMatrix(segment)
+    if !ok {
+      logger.Warn("Matrix for segment does not exits", zap.Int64("segment_id", segment))
+    } else {
+      matrices = append(matrices, value)
+    }
+  }
+
+	resp, err := a.priceService.GetPrice(locationId, categoryId, matrices)
 	if err != nil {
 		c.SendStatus(500)
 		logger.Error("Could not compute price", zap.Error(err))
