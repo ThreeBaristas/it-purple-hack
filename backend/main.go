@@ -3,9 +3,11 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
-	"os"
+	"threebaristas.com/purple/app/core/services"
 	"threebaristas.com/purple/app/repository"
 	"threebaristas.com/purple/pkg/middleware"
 	"threebaristas.com/purple/pkg/routes"
@@ -26,6 +28,7 @@ func main() {
 	if err != nil {
 		logger.Fatal("Could not initialize db connection", zap.Error(err))
 	}
+  db.SetMaxOpenConns(5)
 
 	cR := repository.NewCategoriesRepositoryImpl()
 	lR := repository.NewLocationsRepositoryImpl()
@@ -36,16 +39,21 @@ func main() {
 		Discounts:      nil,
 	})
 
+	service := services.NewPriceService(cR, lR, &pR, &storage)
+  if os.Getenv("GENERATE_RULES") == "TRUE" {
+    service.GenerateRules()
+  }
+
 	app := fiber.New()
 
 	if os.Getenv("MODE") == "dev" {
 		middleware.SwaggerMiddleware(app)
 	}
 
-	routes.AdminPanelRoutes(app, &cR, &lR, &pR, &storage)
-	routes.CategoriesRoutes(app, &cR)
-	routes.LocationsRoutes(app, &lR)
-	routes.PriceRoutes(app, &cR, &lR, &pR, &storage)
+	routes.AdminPanelRoutes(app, cR, lR, &pR, &storage)
+	routes.CategoriesRoutes(app, cR)
+	routes.LocationsRoutes(app, lR)
+	routes.PriceRoutes(app, cR, lR, &pR, &storage)
 
 	logger.Info("Starting web server")
 	app.Listen(":3000")

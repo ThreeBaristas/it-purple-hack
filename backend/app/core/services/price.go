@@ -2,13 +2,16 @@ package services
 
 import (
 	"errors"
+	"math/rand"
+	"sync"
+
 	"threebaristas.com/purple/app/models"
 	"threebaristas.com/purple/app/repository"
 )
 
 type PriceService struct {
-	categoriesRepo *repository.CategoriesRepository
-	locationsRepo  *repository.LocationsRepository
+	categoriesRepo *repository.CategoriesRepositoryImpl
+	locationsRepo  *repository.LocationsRepositoryImpl
 	priceRepo      *repository.PriceRepository
 	storage        *repository.MatricesMappingStorage
 }
@@ -31,8 +34,8 @@ type GetPricesRequest struct {
 }
 
 func NewPriceService(
-	categoriesRepo *repository.CategoriesRepository,
-	locationsRepo *repository.LocationsRepository,
+	categoriesRepo *repository.CategoriesRepositoryImpl,
+	locationsRepo *repository.LocationsRepositoryImpl,
 	priceRepo *repository.PriceRepository,
 	storage *repository.MatricesMappingStorage,
 ) PriceService {
@@ -176,4 +179,29 @@ func findInResponse(location *models.Location, category *models.Category, respon
 		}
 	}
 	return nil
+}
+
+func (p *PriceService) GenerateRules() {
+  var wg sync.WaitGroup
+
+  const step = 10
+  for i := 0; i < len(p.locationsRepo.AsList); i += step {
+    for j := 0; j < len(p.categoriesRepo.AsList); j += step {
+      wg.Add(1)
+      var matrixId int64
+      if rand.Intn(10) > 6 {
+        matrixId = int64(rand.Intn(200))
+      }
+      matrixId = 0
+
+      locationId := p.locationsRepo.AsList[i].ID
+      categoryId := p.categoriesRepo.AsList[j].ID
+      price := rand.Intn(5000)
+      go func() { p.SetPrice(locationId, categoryId, matrixId, int64(price))
+      wg.Done()
+    }()
+    }
+  }
+
+  wg.Wait()
 }
