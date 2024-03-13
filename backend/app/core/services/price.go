@@ -48,11 +48,7 @@ func (a *PriceService) SetPrice(locationId int64, categoryId int64, matrixId int
 	return (*a.priceRepo).SetPrice(locationId, categoryId, matrixId, price)
 }
 
-func (a *PriceService) DeletePrice(locationId int64, categoryId int64, segmentId int64) (bool, error) {
-	matrixId, ok := (*a.storage).SegmentToMatrix(segmentId)
-	if !ok {
-		return false, errors.New("Segment not found")
-	}
+func (a *PriceService) DeletePrice(locationId int64, categoryId int64, matrixId int64) (bool, error) {
 	return (*a.priceRepo).DeletePrice(locationId, categoryId, matrixId)
 }
 
@@ -60,7 +56,6 @@ func (a *PriceService) GetRules(req GetPricesRequest) (*GetRulesResponse, error)
 	storage, err := (*a.storage).GetStorage()
 	var matrices []int64
 	for _, entry := range storage.Discounts {
-		println(entry.MatrixId)
 		matrices = append(matrices, entry.MatrixId)
 	}
 

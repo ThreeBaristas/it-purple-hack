@@ -6,3 +6,7 @@ CREATE TABLE IF NOT EXISTS prices(
   CONSTRAINT PK_price PRIMARY KEY (category_id, location_id, matrix_id)
 );
 
+CREATE TABLE IF NOT EXISTS storage_mapping(
+  segment_id int PRIMARY KEY,
+  matrix_id int
+);
