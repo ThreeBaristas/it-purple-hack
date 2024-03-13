@@ -1,5 +1,7 @@
 package services
 
+import "math/rand"
+
 func NewGetUserSegmentsService() *GetUserSegmentsService {
 	return &GetUserSegmentsService{}
 }
@@ -7,29 +9,39 @@ func NewGetUserSegmentsService() *GetUserSegmentsService {
 type GetUserSegmentsService struct {
 }
 
+func randomArray() []int64 {
+  return []int64{
+    int64(rand.Intn(200) + 1),
+    int64(rand.Intn(200) + 1),
+    int64(rand.Intn(200) + 1),
+    int64(rand.Intn(200) + 1),
+    int64(rand.Intn(200) + 1),
+  }
+}
+
 var db = map[int64][]int64{
-	2100: {156, 278},
-	2200: {156, 290, 412},
-	2300: {180},
-	2400: {192, 314, 436, 158},
-	2500: {204, 326, 148, 370, 592},
-	2600: {216},
-	2700: {228, 350, 472, 194},
-	2800: {},
-	2900: {240, 362, 484, 206, 428},
-	3000: {252, 374},
-	3100: {264, 386, 508, 230},
-	3200: {276, 398},
-	3300: {288, 410, 532, 254},
-	3400: {300, 422, 544, 166},
-	3500: {312, 434},
-	3600: {324, 446, 568, 190},
-	3700: {336, 458},
-	3800: {348, 470, 592, 214},
-	3900: {360, 482, 604, 226},
-	4000: {372, 494, 616, 238},
-	4100: {384, 506, 628, 250},
-	4200: {396, 518, 640, 262},
+	2100: randomArray(),
+	2200: randomArray(),
+	2300: randomArray(),
+	2400: randomArray(),
+	2500: randomArray(),
+	2600: randomArray(),
+	2700: randomArray(),
+	2800: randomArray(),
+	2900: randomArray(),
+	3000: randomArray(),
+	3100: randomArray(),
+	3200: randomArray(),
+	3300: randomArray(),
+	3400: randomArray(),
+	3500: randomArray(),
+	3600: randomArray(),
+	3700: randomArray(),
+	3800: randomArray(),
+	3900: randomArray(),
+	4000: randomArray(),
+	4100: randomArray(),
+	4200: randomArray(),
 }
 
 func (g *GetUserSegmentsService) GetSegments(userId int64) ([]int64, error) {

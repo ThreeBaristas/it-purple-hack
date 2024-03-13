@@ -37,7 +37,7 @@ func NewPostgresPriceRepository(db *sql.DB) PriceRepository {
 }
 
 func (r *PostgresPriceRepository) GetPricesBatch(req *GetPriceRequest) ([]GetPriceResponse, error) {
-	rows, err := r.db.Query("SELECT location_id, category_id, price, matrix_id FROM prices WHERE location_id = any($1) AND category_id = any($2) AND (matrix_id = any($3) OR matrix_id = 0) ORDER BY matrix_id DESC", pq.Array(req.LocationId), pq.Array(req.CategoryId), pq.Array(req.Matrices))
+	rows, err := r.db.Query("SELECT location_id, category_id, price, matrix_id FROM prices WHERE location_id = any($1) AND category_id = any($2) AND (matrix_id = any($3) OR matrix_id = (SELECT matrix_id FROM storage_mapping WHERE segment_id = 0)) ORDER BY matrix_id DESC", pq.Array(req.LocationId), pq.Array(req.CategoryId), pq.Array(req.Matrices))
 	if err != nil {
 		return nil, err
 	}

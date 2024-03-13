@@ -2,11 +2,13 @@ package controllers
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"threebaristas.com/purple/app/core/services"
 	"threebaristas.com/purple/app/repository"
+	"threebaristas.com/purple/pkg/metrics"
 )
 
 type PriceController struct {
@@ -27,6 +29,12 @@ func NewPriceController(
 	}
 }
 
+
+func recordRequestDuration(start time.Time) {
+  duration := time.Since(start)
+  metrics.TimeToProcessGetPrice.Observe(float64(duration / time.Millisecond))
+}
+
 // GetPrice func gets a price for given category_id & location_id & user_id
 //
 //	@Tags		admin
@@ -34,6 +42,9 @@ func NewPriceController(
 func (a *PriceController) GetPrice(c *fiber.Ctx) error {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
+
+  startTime := time.Now()
+  defer recordRequestDuration(startTime)
 	categoryId, err := strconv.ParseInt(c.Query("category_id", "NULL"), 10, 64)
 
 	if err != nil {
@@ -63,17 +74,19 @@ func (a *PriceController) GetPrice(c *fiber.Ctx) error {
 		return c.SendString("Error. could not get segments" + err.Error())
 	}
 
+  var matrixToSegment map[int64]int64 = make(map[int64]int64)
 	var matrices []int64
 	for _, segment := range segments {
 		value, ok := (*a.mapper).SegmentToMatrix(segment)
 		if !ok {
 			logger.Warn("Matrix for segment does not exits", zap.Int64("segment_id", segment))
 		} else {
+      matrixToSegment[value] = segment
 			matrices = append(matrices, value)
 		}
 	}
 
-	resp, err := a.priceService.GetPrice(locationId, categoryId, matrices)
+	resp, err := a.priceService.GetPrice(locationId, categoryId, matrices, &matrixToSegment)
 	if err != nil {
 		c.SendStatus(500)
 		logger.Error("Could not compute price", zap.Error(err))
