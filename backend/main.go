@@ -37,6 +37,7 @@ func main() {
 	storage := repository.DefaultInlineMappingStorage(db)
 
   if os.Getenv("GENERATE_STORAGE") == "TRUE" {
+    logger.Warn("Started generating storage")
     var discounts []repository.DiscountMappingDTO
     for i := 1; i <= 200; i++ {
       discounts = append(discounts, repository.DiscountMappingDTO{
@@ -48,11 +49,14 @@ func main() {
       BaselineMatrix: 0,
       Discounts:      discounts,
     })
+    logger.Warn("Finished generating storage")
   }
 
 	service := services.NewPriceService(cR, lR, &pR, &storage)
   if os.Getenv("GENERATE_RULES") == "TRUE" {
+    logger.Warn("Started generating price rules")
     service.GenerateRules()
+    logger.Warn("Finished generating price rules")
   }
 
 	app := fiber.New()
