@@ -26,7 +26,7 @@ function RulesTable({ request }: { request: GetRulesRequest }) {
         <TableRow>
           <TableHead>Локация</TableHead>
           <TableHead>Категория</TableHead>
-          <TableHead>Сегмент</TableHead>
+          <TableHead>Матрица</TableHead>
           <TableHead>Цена</TableHead>
           <TableHead>Действия</TableHead>
         </TableRow>
@@ -34,7 +34,7 @@ function RulesTable({ request }: { request: GetRulesRequest }) {
       <TableBody>
         {data.data.map((it) => (
           <RuleRow
-            key={`${it.location.id}${it.category.id}${it.segment}`}
+            key={`${it.location.id}${it.category.id}${it.matrix_id}`}
             rule={it}
           />
         ))}
@@ -93,14 +93,14 @@ function RuleRow({ rule }: { rule: Rule }) {
   const { mutate, isPending } = useDeletePriceMutation({
     location_id: rule.location.id,
     category_id: rule.category.id,
-    segment_id: rule.segment
+    matrix_id: rule.matrix_id
   })
 
   function goToRule() {
     navigate({
       to: '/price',
       search: {
-        segment_id: rule.segment,
+        matrix_id: rule.matrix_id,
         location: rule.location,
         category: rule.category
       }
@@ -111,7 +111,7 @@ function RuleRow({ rule }: { rule: Rule }) {
     <TableRow>
       <TableCell>{rule.location.name}</TableCell>
       <TableCell>{rule.category.name}</TableCell>
-      <TableCell>{rule.segment ? rule.segment : 'Baseline'}</TableCell>
+      <TableCell>{rule.matrix_id ? rule.matrix_id : 'Baseline'}</TableCell>
       <TableCell>
         {new Intl.NumberFormat('ru', {
           style: 'currency',

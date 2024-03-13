@@ -31,6 +31,10 @@ func main() {
 	lR := repository.NewLocationsRepositoryImpl()
 	pR := repository.NewPostgresPriceRepository(db)
 	storage := repository.DefaultInlineMappingStorage()
+	storage.SetUpStorage(&repository.SetUpStorageRequest{
+		BaselineMatrix: 0,
+		Discounts:      nil,
+	})
 
 	app := fiber.New()
 
