@@ -6,20 +6,24 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"threebaristas.com/purple/app/core/services"
+	"threebaristas.com/purple/app/repository"
 )
 
 type PriceController struct {
 	priceService    *services.PriceService
 	segmentsService *services.GetUserSegmentsService
+  mapper *repository.MatricesMappingStorage
 }
 
 func NewPriceController(
 	service *services.PriceService,
 	segmentsService *services.GetUserSegmentsService,
+  mapper *repository.MatricesMappingStorage,
 ) PriceController {
 	return PriceController{
 		priceService:    service,
 		segmentsService: segmentsService,
+    mapper: mapper,
 	}
 }
 
@@ -66,11 +70,13 @@ func (a *PriceController) GetPrice(c *fiber.Ctx) error {
 		return c.SendString("Error. could not find price. " + err.Error())
 	}
 
+  segment_id, _ := (*a.mapper).GetSegmentByMatrix(resp.MatrixId)
+
 	return c.JSON(fiber.Map{
 		"price":       resp.Price,
 		"category_id": resp.CategoryId,
 		"location_id": resp.LocationId,
 		"matrix_id":   resp.MatrixId,
-		"segment_id":  resp.MatrixId,
+		"segment_id":  segment_id,
 	})
 }

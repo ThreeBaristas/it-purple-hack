@@ -16,7 +16,7 @@ type PriceService struct {
 type PriceRule struct {
 	Location *models.Location `json:"location"`
 	Category *models.Category `json:"category"`
-	Segment  int64            `json:"segment"`
+	Matrix  int64            `json:"matrix_id"`
 	Price    int64            `json:"price"`
 }
 
@@ -79,7 +79,7 @@ func (a *PriceService) GetRules(req GetPricesRequest) (*GetRulesResponse, error)
 		res1 = append(res1, PriceRule{
 			Location: location,
 			Category: category,
-			Segment:  r.MatrixId,
+			Matrix:  r.MatrixId,
 			Price:    r.Price,
 		})
 	}
