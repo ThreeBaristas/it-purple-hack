@@ -33,11 +33,22 @@ func main() {
 	cR := repository.NewCategoriesRepositoryImpl()
 	lR := repository.NewLocationsRepositoryImpl()
 	pR := repository.NewPostgresPriceRepository(db)
+
 	storage := repository.DefaultInlineMappingStorage(db)
-	storage.SetUpStorage(&repository.SetUpStorageRequest{
-		BaselineMatrix: 0,
-		Discounts:      nil,
-	})
+
+  if os.Getenv("GENERATE_STORAGE") == "TRUE" {
+    var discounts []repository.DiscountMappingDTO
+    for i := 1; i <= 200; i++ {
+      discounts = append(discounts, repository.DiscountMappingDTO{
+        SegmentId: int64(i),
+        MatrixId: int64(i),
+      })
+    }
+    storage.SetUpStorage(&repository.SetUpStorageRequest{
+      BaselineMatrix: 0,
+      Discounts:      discounts,
+    })
+  }
 
 	service := services.NewPriceService(cR, lR, &pR, &storage)
   if os.Getenv("GENERATE_RULES") == "TRUE" {
