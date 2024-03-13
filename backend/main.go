@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/valyala/fasthttp/fasthttpadaptor"
 	"go.uber.org/zap"
 	"threebaristas.com/purple/app/core/services"
 	"threebaristas.com/purple/app/repository"
@@ -69,6 +71,12 @@ func main() {
 	routes.CategoriesRoutes(app, cR)
 	routes.LocationsRoutes(app, lR)
 	routes.PriceRoutes(app, cR, lR, &pR, &storage)
+
+  p := fasthttpadaptor.NewFastHTTPHandler(promhttp.Handler())
+  app.Get("/metrics", func(c *fiber.Ctx) error {
+    p(c.Context())
+    return nil
+  })
 
 	logger.Info("Starting web server")
 	app.Listen(":3000")
