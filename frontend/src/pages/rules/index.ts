@@ -14,7 +14,7 @@ const schema = object({
 export const rulesRoute = createRoute({
   getParentRoute: () => rootRoute,
   component: RulesPageComponent,
-  path: '/rules',
+  path: '/',
   validateSearch: (data) => parse(schema, data),
   loaderDeps: ({ search }) => ({ ...search }),
   loader: ({ context: { queryClient }, deps }) => {

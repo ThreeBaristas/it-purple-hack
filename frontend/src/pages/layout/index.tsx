@@ -7,7 +7,7 @@ export function Layout() {
       <header className="bg-primary text-primary-foreground">
         <nav className="container mx-auto flex items-center justify-between px-4 py-2">
           <h1 className="font-mono text-2xl font-bold">
-            <Link search={{ page: 0, pageSize: 10 }} to="/rules">
+            <Link search={{ page: 0, pageSize: 10 }} to="/">
               Three Baristas ft. ОЛПРОГА
             </Link>
           </h1>
@@ -16,7 +16,7 @@ export function Layout() {
               <Link to="/storage">Сторадж</Link>
             </li>
             <li>
-              <Link to="/rules" search={{ page: 0, pageSize: 10 }}>
+              <Link to="/" search={{ page: 0, pageSize: 10 }}>
                 Правила цен
               </Link>
             </li>

@@ -1,10 +1,11 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
-  ChevronsRight
+  ChevronsRight,
+  PlusCircle
 } from 'lucide-react'
 import React from 'react'
 
@@ -19,6 +20,14 @@ export function RulesPageComponent() {
   const request = rulesRoute.useSearch()
   return (
     <div className="space-y-4">
+      <div>
+        <Button variant="outline" asChild>
+          <Link to="/price">
+            <PlusCircle className="mr-2 size-4" />
+            Добавить правило
+          </Link>
+        </Button>
+      </div>
       <RulesTable request={request} />
       <React.Suspense fallback={<></>}>
         <Pagination request={request} />
@@ -28,7 +37,7 @@ export function RulesPageComponent() {
 }
 
 function Pagination({ request }: { request: GetRulesRequest }) {
-  const navigate = useNavigate({})
+  const navigate = useNavigate({ from: '/' })
   const { data: response } = useSuspenseQuery(getRulesQueryOptions(request))
 
   const canGoPrevious = response.page > 0
@@ -36,6 +45,7 @@ function Pagination({ request }: { request: GetRulesRequest }) {
 
   function goToPage(page: number) {
     navigate({
+      to: '/',
       search: (prev) => ({
         ...prev,
         page
