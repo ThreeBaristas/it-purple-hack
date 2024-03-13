@@ -6,7 +6,7 @@ import (
 	"threebaristas.com/purple/app/repository"
 )
 
-func LocationsRoutes(a *fiber.App, repo *repository.LocationsRepository) {
+func LocationsRoutes(a *fiber.App, repo *repository.LocationsRepositoryImpl) {
 	controller := controllers.NewLocationsController(repo)
 	a.Get("/api/v1/locations", controller.GetLocationsBySearch)
 	route := a.Group("/api/v1/locations")

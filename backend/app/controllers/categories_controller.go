@@ -9,10 +9,10 @@ import (
 )
 
 type CategoriesController struct {
-	repo *repository.CategoriesRepository
+	repo *repository.CategoriesRepositoryImpl
 }
 
-func NewCategoriesController(categoriesRepo *repository.CategoriesRepository) *CategoriesController {
+func NewCategoriesController(categoriesRepo *repository.CategoriesRepositoryImpl) *CategoriesController {
 	return &CategoriesController{repo: categoriesRepo}
 }
 

@@ -14,10 +14,10 @@ type LocationsRepository interface {
 type LocationsRepositoryImpl struct {
 	LocationRoot *models.Location
 	asMap        map[int64]*models.Location
-	asList       []*models.Location
+	AsList       []*models.Location
 }
 
-func NewLocationsRepositoryImpl() LocationsRepository {
+func NewLocationsRepositoryImpl() *LocationsRepositoryImpl {
 	root := models.GetLocationTreeExample()
 	asList := root.Traverse()
 	asMap := make(map[int64]*models.Location)
@@ -27,7 +27,7 @@ func NewLocationsRepositoryImpl() LocationsRepository {
 
 	return &LocationsRepositoryImpl{
 		LocationRoot: root,
-		asList:       asList,
+		AsList:       asList,
 		asMap:        asMap,
 	}
 }
@@ -48,7 +48,7 @@ func (r *LocationsRepositoryImpl) GetLocationByID(id int64) (*models.Location, e
  **/
 func (r *LocationsRepositoryImpl) GetByString(s string, max int) ([]*models.Location, error) {
 	var filtered []*models.Location
-	for _, category := range r.asList {
+	for _, category := range r.AsList {
 		if strings.Contains(strings.ToLower(category.Name), strings.ToLower(s)) {
 			filtered = append(filtered, category)
 		}

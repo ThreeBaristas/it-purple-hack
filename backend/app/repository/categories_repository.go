@@ -13,11 +13,11 @@ type CategoriesRepository interface {
 }
 type CategoriesRepositoryImpl struct {
 	root   *models.Category
-	asList []*models.Category
-	asMap  map[int64]*models.Category
+	AsList []*models.Category
+	AsMap  map[int64]*models.Category
 }
 
-func NewCategoriesRepositoryImpl() CategoriesRepository {
+func NewCategoriesRepositoryImpl() *CategoriesRepositoryImpl {
 	root := models.GetCategoryTreeExample()
 	asList := root.FindAllByPredicate(func(c *models.Category) bool { return true })
 	asMap := make(map[int64]*models.Category)
@@ -27,8 +27,8 @@ func NewCategoriesRepositoryImpl() CategoriesRepository {
 
 	return &CategoriesRepositoryImpl{
 		root:   root,
-		asList: asList,
-		asMap:  asMap,
+		AsList: asList,
+		AsMap:  asMap,
 	}
 }
 
@@ -36,7 +36,7 @@ func NewCategoriesRepositoryImpl() CategoriesRepository {
  * Returns a category with such id or an error if no category exists. It works in O(1).
  **/
 func (r *CategoriesRepositoryImpl) GetCategoryByID(id int64) (*models.Category, error) {
-	res, ok := r.asMap[id]
+	res, ok := r.AsMap[id]
 	if !ok {
 		return nil, errors.New("Not found")
 	}
@@ -48,7 +48,7 @@ func (r *CategoriesRepositoryImpl) GetCategoryByID(id int64) (*models.Category, 
  **/
 func (r *CategoriesRepositoryImpl) GetByString(s string, max int) ([]*models.Category, error) {
 	var ans []*models.Category
-	for _, node := range r.asList {
+	for _, node := range r.AsList {
 		if strings.Contains(strings.ToLower(node.Name), strings.ToLower(s)) {
 			ans = append(ans, node)
 

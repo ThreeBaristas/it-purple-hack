@@ -2,13 +2,17 @@ package services
 
 import (
 	"errors"
+	"math/rand"
+	"sort"
+	"sync"
+
 	"threebaristas.com/purple/app/models"
 	"threebaristas.com/purple/app/repository"
 )
 
 type PriceService struct {
-	categoriesRepo *repository.CategoriesRepository
-	locationsRepo  *repository.LocationsRepository
+	categoriesRepo *repository.CategoriesRepositoryImpl
+	locationsRepo  *repository.LocationsRepositoryImpl
 	priceRepo      *repository.PriceRepository
 	storage        *repository.MatricesMappingStorage
 }
@@ -31,8 +35,8 @@ type GetPricesRequest struct {
 }
 
 func NewPriceService(
-	categoriesRepo *repository.CategoriesRepository,
-	locationsRepo *repository.LocationsRepository,
+	categoriesRepo *repository.CategoriesRepositoryImpl,
+	locationsRepo *repository.LocationsRepositoryImpl,
 	priceRepo *repository.PriceRepository,
 	storage *repository.MatricesMappingStorage,
 ) PriceService {
@@ -87,7 +91,11 @@ func (a *PriceService) GetRules(req GetPricesRequest) (*GetRulesResponse, error)
 	}, nil
 }
 
-func (a *PriceService) GetPrice(locationId int64, categoryId int64, matrices []int64) (*repository.GetPriceResponse, error) {
+/*
+ * Gets price for given locationId and categoryId and matrices (excluding baseline matrix).
+ * A nullable parameter matrixToSegment may also be provided if you want to sort data by segments.
+ */
+func (a *PriceService) GetPrice(locationId int64, categoryId int64, matrices []int64, matrixToSegment *map[int64]int64) (*repository.GetPriceResponse, error) {
 	// O(1)
 	location, _ := (*a.locationsRepo).GetLocationByID(locationId)
 	if location == nil {
@@ -125,6 +133,12 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, matrices []i
 	if err != nil {
 		return nil, err
 	}
+
+  if matrixToSegment != nil {
+    sort.Slice(response, func(i, j int) bool {
+      return (*matrixToSegment)[response[i].MatrixId] > (*matrixToSegment)[response[j].MatrixId]
+    })
+  }
 
 	// O(h^4) (!!!)
 	firstGoodNode := findFirstNode(locations, categories, response)
@@ -176,4 +190,26 @@ func findInResponse(location *models.Location, category *models.Category, respon
 		}
 	}
 	return nil
+}
+
+func (p *PriceService) GenerateRules() {
+  var wg sync.WaitGroup
+
+  const step = 10
+  for i := 0; i < len(p.locationsRepo.AsList); i += step {
+    for j := 0; j < len(p.categoriesRepo.AsList); j += step {
+      wg.Add(1)
+      var matrixId int64
+      matrixId = int64(rand.Intn(200))
+
+      locationId := p.locationsRepo.AsList[i].ID
+      categoryId := p.categoriesRepo.AsList[j].ID
+      price := rand.Intn(5000)
+      go func() { p.SetPrice(locationId, categoryId, matrixId, int64(price))
+      wg.Done()
+    }()
+    }
+  }
+
+  wg.Wait()
 }

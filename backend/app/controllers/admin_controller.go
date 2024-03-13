@@ -51,7 +51,7 @@ func (a *AdminController) GetPrice(c *fiber.Ctx) error {
 	}
 
 	logger.Info("Handling /admin/price request", zap.Int64("categoryId", categoryId), zap.Int64("locationId", locationId), zap.Int64("matrixId", matrixId))
-	resp, err := a.service.GetPrice(locationId, categoryId, []int64{matrixId})
+	resp, err := a.service.GetPrice(locationId, categoryId, []int64{matrixId}, nil)
 	if err != nil {
 		c.SendStatus(500)
 		logger.Error("Could not compute price", zap.Error(err))

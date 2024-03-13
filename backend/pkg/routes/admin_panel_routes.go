@@ -7,7 +7,7 @@ import (
 	"threebaristas.com/purple/app/repository"
 )
 
-func AdminPanelRoutes(a *fiber.App, cR *repository.CategoriesRepository, lR *repository.LocationsRepository, pR *repository.PriceRepository, storage *repository.MatricesMappingStorage) {
+func AdminPanelRoutes(a *fiber.App, cR *repository.CategoriesRepositoryImpl, lR *repository.LocationsRepositoryImpl, pR *repository.PriceRepository, storage *repository.MatricesMappingStorage) {
 	service := services.NewPriceService(cR, lR, pR, storage)
 	controller := controllers.NewAdminController(&service, storage)
 	route := a.Group("/api/v1/admin")

@@ -10,10 +10,10 @@ import (
 )
 
 type LocationsController struct {
-	repo *repository.LocationsRepository
+	repo *repository.LocationsRepositoryImpl
 }
 
-func NewLocationsController(locationsRepo *repository.LocationsRepository) *LocationsController {
+func NewLocationsController(locationsRepo *repository.LocationsRepositoryImpl) *LocationsController {
 	return &LocationsController{repo: locationsRepo}
 }
 
