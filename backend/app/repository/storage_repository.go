@@ -1,5 +1,10 @@
 package repository
 
+import (
+	"context"
+	"database/sql"
+)
+
 type MatricesMappingStorage interface {
 	SegmentToMatrix(segmentId int64) (int64, bool)
 	BaselineMatrix() int64
@@ -9,31 +14,25 @@ type MatricesMappingStorage interface {
 }
 
 type InlineMappingStorage struct {
-	baselineMatrix  int64
-	segmentToMatrix map[int64]int64
-	// Между сегментами и матрицами существует биекция,
-	// а для биекции, как известно, существует обратная ей
-	matrixToSegment map[int64]int64
+	db *sql.DB
 }
 
-func DefaultInlineMappingStorage() MatricesMappingStorage {
+func DefaultInlineMappingStorage(db *sql.DB) MatricesMappingStorage {
 	return &InlineMappingStorage{
-		baselineMatrix:  0,
-		segmentToMatrix: make(map[int64]int64),
-		matrixToSegment: make(map[int64]int64),
+    db: db,
 	}
 }
 
 func (i *InlineMappingStorage) SegmentToMatrix(segmentId int64) (int64, bool) {
-	if segmentId == 0 {
-		return i.baselineMatrix, true
-	}
-	res, ok := i.segmentToMatrix[segmentId]
-	return res, ok
+  row := i.db.QueryRow("SELECT matrix_id FROM storage_mapping WHERE segment_id = $1", segmentId)
+  var matrixId int64
+  err := row.Scan(&matrixId)
+  return matrixId, err == nil
 }
 
 func (i *InlineMappingStorage) BaselineMatrix() int64 {
-	return i.baselineMatrix
+  data, _ := i.SegmentToMatrix(0)
+  return data
 }
 
 type DiscountMappingDTO struct {
@@ -47,31 +46,54 @@ type SetUpStorageRequest struct {
 }
 
 func (i *InlineMappingStorage) SetUpStorage(req *SetUpStorageRequest) error {
-	i.baselineMatrix = req.BaselineMatrix
-	i.segmentToMatrix = make(map[int64]int64)
-
-	// Design convention: segment 0 is baseline matrix
-	i.segmentToMatrix[0] = req.BaselineMatrix
-	i.matrixToSegment[req.BaselineMatrix] = 0
-
-	for _, mapping := range req.Discounts {
-		i.segmentToMatrix[mapping.SegmentId] = mapping.MatrixId
-		i.matrixToSegment[mapping.MatrixId] = mapping.SegmentId
-	}
-	return nil
+  tx, err := i.db.BeginTx(context.TODO(), nil)
+  if err != nil {
+    return err
+  }
+  _, err = tx.Exec("DELETE FROM storage_mapping")
+  if err != nil {
+    return err
+  }
+  setSegmentMatrix := func (segment int64, matrix int64) error {
+    _, err = tx.Exec("INSERT INTO storage_mapping(segment_id, matrix_id) VALUES ($1, $2) ON CONFLICT (segment_id) DO UPDATE SET matrix_id = $2", segment, matrix)
+    return err
+  }
+  err = setSegmentMatrix(0, req.BaselineMatrix)
+  if err != nil {
+    return tx.Rollback()
+  }
+  for _, dto := range req.Discounts {
+    if setSegmentMatrix(dto.SegmentId, dto.MatrixId) != nil {
+      return tx.Rollback()
+    }
+  }
+	return tx.Commit()
 }
 
 func (i *InlineMappingStorage) GetStorage() (*SetUpStorageRequest, error) {
-	resp := SetUpStorageRequest{}
-	resp.Discounts = []DiscountMappingDTO{}
-	resp.BaselineMatrix = i.baselineMatrix
-	for segment, matrix := range i.segmentToMatrix {
-		resp.Discounts = append(resp.Discounts, DiscountMappingDTO{SegmentId: segment, MatrixId: matrix})
-	}
-	return &resp, nil
+  resp := SetUpStorageRequest{}
+  resp.Discounts = []DiscountMappingDTO{}
+
+  rows, err := i.db.Query("SELECT segment_id, matrix_id FROM storage_mapping")
+  if err != nil {
+    return nil, err
+  }
+  for rows.Next() {
+    cur := DiscountMappingDTO{}
+    rows.Scan(&cur.SegmentId, &cur.MatrixId)
+    if(cur.SegmentId == 0) {
+      resp.BaselineMatrix = cur.MatrixId
+    }
+    resp.Discounts = append(resp.Discounts, cur)
+  }
+
+  return &resp, nil;
 }
 
 func (i *InlineMappingStorage) GetSegmentByMatrix(matrix int64) (int64, bool) {
-	val, ok := i.matrixToSegment[matrix]
-	return val, ok
+  row := i.db.QueryRow("SELECT segment_id FROM storage_mapping WHERE matrix_id = $1", matrix)
+  var segment int64
+  err := row.Scan(&segment)
+  return segment, err == nil
 }
+
