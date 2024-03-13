@@ -189,10 +189,11 @@ func (p *PriceService) GenerateRules() {
     for j := 0; j < len(p.categoriesRepo.AsList); j += step {
       wg.Add(1)
       var matrixId int64
-      if rand.Intn(10) > 6 {
+      if rand.Intn(2) > 0 { // Half is from matrices
         matrixId = int64(rand.Intn(200))
+      } else {
+        matrixId = 0
       }
-      matrixId = 0
 
       locationId := p.locationsRepo.AsList[i].ID
       categoryId := p.categoriesRepo.AsList[j].ID
