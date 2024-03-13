@@ -4,6 +4,7 @@ type MatricesMappingStorage interface {
 	SegmentToMatrix(segmentId int64) (int64, bool)
 	BaselineMatrix() int64
 	SetUpStorage(req *SetUpStorageRequest) error
+	GetStorage() (*SetUpStorageRequest, error)
 }
 
 type InlineMappingStorage struct {
@@ -47,4 +48,14 @@ func (i *InlineMappingStorage) SetUpStorage(req *SetUpStorageRequest) error {
 		i.discounts[mapping.SegmentId] = mapping.MatrixId
 	}
 	return nil
+}
+
+func (i *InlineMappingStorage) GetStorage() (*SetUpStorageRequest, error) {
+	resp := SetUpStorageRequest{}
+	resp.Discounts = []DiscountMappingDTO{}
+	resp.BaselineMatrix = i.baselineMatrix
+	for segment, matrix := range i.discounts {
+		resp.Discounts = append(resp.Discounts, DiscountMappingDTO{SegmentId: segment, MatrixId: matrix})
+	}
+	return &resp, nil
 }

@@ -16,4 +16,5 @@ func AdminPanelRoutes(a *fiber.App, cR *repository.CategoriesRepository, lR *rep
 	route.Delete("/price", controller.DeletePrice)
 	route.Get("/rules", controller.GetRules)
 	route.Post("/storage", controller.SetUpStorage)
+	route.Get("/storage", controller.GetStorage)
 }

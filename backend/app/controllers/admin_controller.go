@@ -210,3 +210,12 @@ func (a *AdminController) SetUpStorage(c *fiber.Ctx) error {
 
 	return (*a.storageRepo).SetUpStorage(&payload)
 }
+
+func (a *AdminController) GetStorage(c *fiber.Ctx) error {
+	storage, err := (*a.storageRepo).GetStorage()
+	if err != nil {
+		c.SendStatus(500)
+		return err
+	}
+	return c.JSON(storage)
+}
