@@ -217,12 +217,12 @@ func (a *AdminController) GetStorage(c *fiber.Ctx) error {
 		c.SendStatus(500)
 		return err
 	}
-  filteredDiscounts := []repository.DiscountMappingDTO{}
-  for _, dto := range storage.Discounts {
-    if dto.MatrixId != storage.BaselineMatrix {
-      filteredDiscounts = append(filteredDiscounts, dto)
-    }
-  }
-  storage.Discounts = filteredDiscounts
+	filteredDiscounts := []repository.DiscountMappingDTO{}
+	for _, dto := range storage.Discounts {
+		if dto.MatrixId != storage.BaselineMatrix {
+			filteredDiscounts = append(filteredDiscounts, dto)
+		}
+	}
+	storage.Discounts = filteredDiscounts
 	return c.JSON(storage)
 }
