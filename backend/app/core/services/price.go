@@ -126,7 +126,7 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, matrices []i
 
 	// O(h_1 + h_2)
 	req := formBatchRequest(locations, categories)
-	req.Matrices = matrices
+  req.Matrices =  matrices
 
 	// Response has a length of O(h^2)
 	response, err := (*a.priceRepo).GetPricesBatch(req)
@@ -134,14 +134,12 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, matrices []i
 		return nil, err
 	}
 
+	firstGoodNode := a.findFirstNode(locations, categories, response)
   if matrixToSegment != nil {
     sort.Slice(response, func(i, j int) bool {
       return (*matrixToSegment)[response[i].MatrixId] > (*matrixToSegment)[response[j].MatrixId]
     })
   }
-
-	// O(h^4) (!!!)
-	firstGoodNode := findFirstNode(locations, categories, response)
 
 	return firstGoodNode, nil
 }
@@ -168,19 +166,34 @@ func formBatchRequest(locations []*models.Location, categories []*models.Categor
  * @param `categories` - array of categories from `category_start` to `ROOT`
  * @param `response` - array of prices for pairs of `category` and `location`. This array is ordered by `MatrixId` in descending order
  **/
-func findFirstNode(locations []*models.Location, categories []*models.Category, response []repository.GetPriceResponse) *repository.GetPriceResponse {
-	// O(h) for this array
-	for _, loc := range locations {
-		// O(h) for this array
-		for _, cat := range categories {
-			// O(h^2) to find
-			res := findInResponse(loc, cat, response)
-			if res != nil {
-				return res
-			}
+func (a *PriceService) findFirstNode(locations []*models.Location, categories []*models.Category, response []repository.GetPriceResponse) *repository.GetPriceResponse {
+	// Сначала поднимаеся по категориям, потом по локациям.
+	// Поэтому первым делом выбираем пару, у которой локация дальше всего от корня
+	maxLocation, _ := (*a.locationsRepo).GetLocationByID(response[0].LocationId)
+	for _, node := range response {
+		nodeLocation, _ := (*a.locationsRepo).GetLocationByID(node.LocationId)
+		if nodeLocation.DistToRoot > maxLocation.DistToRoot {
+			maxLocation = nodeLocation
 		}
 	}
-	return &response[0]
+
+	maxCategoryMaxLocation, _ := (*a.categoriesRepo).GetCategoryByID(response[0].CategoryId)
+	for _, node := range response {
+		nodeCategory, _ := (*a.categoriesRepo).GetCategoryByID(node.CategoryId)
+		if nodeCategory.DistToRoot > maxCategoryMaxLocation.DistToRoot {
+			maxCategoryMaxLocation = nodeCategory
+		}
+	}
+
+	var answer *repository.GetPriceResponse = nil
+	for _, node := range response {
+		if node.CategoryId == maxCategoryMaxLocation.ID && node.LocationId == maxLocation.ID {
+			answer = &node
+			break
+		}
+	}
+
+	return answer
 }
 
 func findInResponse(location *models.Location, category *models.Category, response []repository.GetPriceResponse) *repository.GetPriceResponse {
