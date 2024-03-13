@@ -5,22 +5,22 @@ type MatricesMappingStorage interface {
 	BaselineMatrix() int64
 	SetUpStorage(req *SetUpStorageRequest) error
 	GetStorage() (*SetUpStorageRequest, error)
-  GetSegmentByMatrix(matrix int64) (int64, bool)
+	GetSegmentByMatrix(matrix int64) (int64, bool)
 }
 
 type InlineMappingStorage struct {
-	baselineMatrix int64
-	segmentToMatrix      map[int64]int64
-  // Между сегментами и матрицами существует биекция,
-  // а для биекции, как известно, существует обратная ей
-  matrixToSegment   map[int64]int64
+	baselineMatrix  int64
+	segmentToMatrix map[int64]int64
+	// Между сегментами и матрицами существует биекция,
+	// а для биекции, как известно, существует обратная ей
+	matrixToSegment map[int64]int64
 }
 
 func DefaultInlineMappingStorage() MatricesMappingStorage {
 	return &InlineMappingStorage{
-		baselineMatrix: 0,
-		segmentToMatrix:      make(map[int64]int64),
-    matrixToSegment: make(map[int64]int64),
+		baselineMatrix:  0,
+		segmentToMatrix: make(map[int64]int64),
+		matrixToSegment: make(map[int64]int64),
 	}
 }
 
@@ -49,14 +49,14 @@ type SetUpStorageRequest struct {
 func (i *InlineMappingStorage) SetUpStorage(req *SetUpStorageRequest) error {
 	i.baselineMatrix = req.BaselineMatrix
 	i.segmentToMatrix = make(map[int64]int64)
-  
-  // Design convention: segment 0 is baseline matrix
-  i.segmentToMatrix[0] = req.BaselineMatrix
-  i.matrixToSegment[req.BaselineMatrix] = 0;
+
+	// Design convention: segment 0 is baseline matrix
+	i.segmentToMatrix[0] = req.BaselineMatrix
+	i.matrixToSegment[req.BaselineMatrix] = 0
 
 	for _, mapping := range req.Discounts {
 		i.segmentToMatrix[mapping.SegmentId] = mapping.MatrixId
-    i.matrixToSegment[mapping.MatrixId] = mapping.SegmentId
+		i.matrixToSegment[mapping.MatrixId] = mapping.SegmentId
 	}
 	return nil
 }
@@ -72,6 +72,6 @@ func (i *InlineMappingStorage) GetStorage() (*SetUpStorageRequest, error) {
 }
 
 func (i *InlineMappingStorage) GetSegmentByMatrix(matrix int64) (int64, bool) {
-  val, ok := i.matrixToSegment[matrix]
-  return val, ok
+	val, ok := i.matrixToSegment[matrix]
+	return val, ok
 }

@@ -16,7 +16,7 @@ type PriceService struct {
 type PriceRule struct {
 	Location *models.Location `json:"location"`
 	Category *models.Category `json:"category"`
-	Matrix  int64            `json:"matrix_id"`
+	Matrix   int64            `json:"matrix_id"`
 	Price    int64            `json:"price"`
 }
 
@@ -57,13 +57,12 @@ func (a *PriceService) DeletePrice(locationId int64, categoryId int64, segmentId
 }
 
 func (a *PriceService) GetRules(req GetPricesRequest) (*GetRulesResponse, error) {
-  storage, err := (*a.storage).GetStorage();
-  var matrices []int64
-  for _, entry := range storage.Discounts {
-    println(entry.MatrixId)
-    matrices = append(matrices, entry.MatrixId)
-  }
-
+	storage, err := (*a.storage).GetStorage()
+	var matrices []int64
+	for _, entry := range storage.Discounts {
+		println(entry.MatrixId)
+		matrices = append(matrices, entry.MatrixId)
+	}
 
 	res, totalPages, err := (*a.priceRepo).GetRules(req.PageSize, req.Page)
 	if err != nil {
@@ -83,7 +82,7 @@ func (a *PriceService) GetRules(req GetPricesRequest) (*GetRulesResponse, error)
 		res1 = append(res1, PriceRule{
 			Location: location,
 			Category: category,
-			Matrix:  r.MatrixId,
+			Matrix:   r.MatrixId,
 			Price:    r.Price,
 		})
 	}
