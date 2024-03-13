@@ -26,9 +26,15 @@ function RulesTable({ request }: { request: GetRulesRequest }) {
         <TableRow>
           <TableHead>Локация</TableHead>
           <TableHead>Категория</TableHead>
-          <TableHead>Матрица</TableHead>
-          <TableHead>Цена</TableHead>
-          <TableHead>Действия</TableHead>
+          <TableHead className="text-right" align="right">
+            Матрица
+          </TableHead>
+          <TableHead className="text-right" align="right">
+            Цена
+          </TableHead>
+          <TableHead className="text-right" align="right">
+            Действия
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -50,9 +56,9 @@ function RulesTableFallback({ nRows }: { nRows: number }) {
         <TableRow>
           <TableHead>Локация</TableHead>
           <TableHead>Категория</TableHead>
-          <TableHead>Сегмент</TableHead>
-          <TableHead>Цена</TableHead>
-          <TableHead>Действия</TableHead>
+          <TableHead align="right">Матрица</TableHead>
+          <TableHead align="right">Цена</TableHead>
+          <TableHead align="right">Действия</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -111,14 +117,16 @@ function RuleRow({ rule }: { rule: Rule }) {
     <TableRow>
       <TableCell>{rule.location.name}</TableCell>
       <TableCell>{rule.category.name}</TableCell>
-      <TableCell>{rule.matrix_id ? rule.matrix_id : 'Baseline'}</TableCell>
-      <TableCell>
+      <TableCell align="right">
+        {rule.matrix_id ? rule.matrix_id : 'Baseline'}
+      </TableCell>
+      <TableCell align="right">
         {new Intl.NumberFormat('ru', {
           style: 'currency',
           currency: 'RUB'
         }).format(rule.price)}
       </TableCell>
-      <TableCell>
+      <TableCell align="right">
         <Button
           variant="outline"
           size="icon"
