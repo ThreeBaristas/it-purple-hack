@@ -4,6 +4,6 @@ import { Location } from '@/entities/location'
 export type Rule = {
   location: Location
   category: Category
-  segment: number
+  matrix_id: number
   price: number
 }

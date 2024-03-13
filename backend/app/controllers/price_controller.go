@@ -6,20 +6,24 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"threebaristas.com/purple/app/core/services"
+	"threebaristas.com/purple/app/repository"
 )
 
 type PriceController struct {
 	priceService    *services.PriceService
 	segmentsService *services.GetUserSegmentsService
+	mapper          *repository.MatricesMappingStorage
 }
 
 func NewPriceController(
 	service *services.PriceService,
 	segmentsService *services.GetUserSegmentsService,
+	mapper *repository.MatricesMappingStorage,
 ) PriceController {
 	return PriceController{
 		priceService:    service,
 		segmentsService: segmentsService,
+		mapper:          mapper,
 	}
 }
 
@@ -59,18 +63,30 @@ func (a *PriceController) GetPrice(c *fiber.Ctx) error {
 		return c.SendString("Error. could not get segments" + err.Error())
 	}
 
-	resp, err := a.priceService.GetPrice(locationId, categoryId, segments)
+	var matrices []int64
+	for _, segment := range segments {
+		value, ok := (*a.mapper).SegmentToMatrix(segment)
+		if !ok {
+			logger.Warn("Matrix for segment does not exits", zap.Int64("segment_id", segment))
+		} else {
+			matrices = append(matrices, value)
+		}
+	}
+
+	resp, err := a.priceService.GetPrice(locationId, categoryId, matrices)
 	if err != nil {
 		c.SendStatus(500)
 		logger.Error("Could not compute price", zap.Error(err))
 		return c.SendString("Error. could not find price. " + err.Error())
 	}
 
+	segment_id, _ := (*a.mapper).GetSegmentByMatrix(resp.MatrixId)
+
 	return c.JSON(fiber.Map{
 		"price":       resp.Price,
 		"category_id": resp.CategoryId,
 		"location_id": resp.LocationId,
 		"matrix_id":   resp.MatrixId,
-		"segment_id":  resp.MatrixId,
+		"segment_id":  segment_id,
 	})
 }

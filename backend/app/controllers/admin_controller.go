@@ -44,14 +44,14 @@ func (a *AdminController) GetPrice(c *fiber.Ctx) error {
 		return c.SendString("Error! location_id is not a number")
 	}
 
-	segmentId, err := strconv.ParseInt(c.Query("segment_id", "0"), 10, 64)
+	matrixId, err := strconv.ParseInt(c.Query("matrix_id", "0"), 10, 64)
 	if err != nil {
 		c.SendStatus(400)
-		return c.SendString("Error! segment is not a number")
+		return c.SendString("Error! matrix_id is not a number")
 	}
 
-	logger.Info("Handling /admin/price request", zap.Int64("categoryId", categoryId), zap.Int64("locationId", locationId), zap.Int64("segment_id", segmentId))
-	resp, err := a.service.GetPrice(locationId, categoryId, []int64{segmentId})
+	logger.Info("Handling /admin/price request", zap.Int64("categoryId", categoryId), zap.Int64("locationId", locationId), zap.Int64("matrixId", matrixId))
+	resp, err := a.service.GetPrice(locationId, categoryId, []int64{matrixId})
 	if err != nil {
 		c.SendStatus(500)
 		logger.Error("Could not compute price", zap.Error(err))
@@ -84,10 +84,10 @@ func (a *AdminController) SetPrice(c *fiber.Ctx) error {
 		return c.SendString("Error! location_id is not a number")
 	}
 
-	segmentId, err := strconv.ParseInt(c.Query("segment_id", "0"), 10, 64)
+	matrixId, err := strconv.ParseInt(c.Query("matrix_id", "0"), 10, 64)
 	if err != nil {
-		logger.Error("Could not parse segment_id", zap.Error(err))
-		return c.SendString("Error! segment_id is not a number")
+		logger.Error("Could not parse matrix_id", zap.Error(err))
+		return c.SendString("Error! matrix_id is not a number")
 	}
 
 	price, err := strconv.ParseInt(c.Query("price", "NULL"), 10, 64)
@@ -96,7 +96,7 @@ func (a *AdminController) SetPrice(c *fiber.Ctx) error {
 		return c.SendString("Error! price is not a number")
 	}
 
-	resp, err := a.service.SetPrice(locationId, categoryId, segmentId, price)
+	resp, err := a.service.SetPrice(locationId, categoryId, matrixId, price)
 	if err != nil {
 		logger.Error("Could not set price", zap.Error(err))
 		return c.SendString("Error! could not set price")
@@ -123,13 +123,13 @@ func (a *AdminController) DeletePrice(c *fiber.Ctx) error {
 		return c.SendString("Error! location_id is not a number")
 	}
 
-	segmentId, err := strconv.ParseInt(c.Query("segment_id", "0"), 10, 64)
+	matrixId, err := strconv.ParseInt(c.Query("matrix_id", "0"), 10, 64)
 	if err != nil {
-		logger.Error("Could not parse segment_id", zap.Error(err))
-		return c.SendString("Error! segment_id is not a number")
+		logger.Error("Could not parse matrix_id", zap.Error(err))
+		return c.SendString("Error! matrix_id is not a number")
 	}
 
-	resp, err := a.service.DeletePrice(locationId, categoryId, segmentId)
+	resp, err := a.service.DeletePrice(locationId, categoryId, matrixId)
 	if err != nil {
 		logger.Error("Could not delete price", zap.Error(err))
 		return c.SendString("Error! could not delete price")
@@ -174,7 +174,7 @@ func (a *AdminController) GetRules(c *fiber.Ctx) error {
 				ID:   val.Category.ID,
 				Name: val.Category.Name,
 			},
-			MatrixId: val.Segment,
+			MatrixId: val.Matrix,
 			Price:    val.Price,
 		})
 	}
@@ -189,7 +189,7 @@ func (a *AdminController) GetRules(c *fiber.Ctx) error {
 type RuleDTO struct {
 	Location LocationDTO `json:"location"`
 	Category CategoryDTO `json:"category"`
-	MatrixId int64       `json:"segment"`
+	MatrixId int64       `json:"matrix_id"`
 	Price    int64       `json:"price"`
 }
 
@@ -209,4 +209,20 @@ func (a *AdminController) SetUpStorage(c *fiber.Ctx) error {
 	}
 
 	return (*a.storageRepo).SetUpStorage(&payload)
+}
+
+func (a *AdminController) GetStorage(c *fiber.Ctx) error {
+	storage, err := (*a.storageRepo).GetStorage()
+	if err != nil {
+		c.SendStatus(500)
+		return err
+	}
+	filteredDiscounts := []repository.DiscountMappingDTO{}
+	for _, dto := range storage.Discounts {
+		if dto.MatrixId != storage.BaselineMatrix {
+			filteredDiscounts = append(filteredDiscounts, dto)
+		}
+	}
+	storage.Discounts = filteredDiscounts
+	return c.JSON(storage)
 }

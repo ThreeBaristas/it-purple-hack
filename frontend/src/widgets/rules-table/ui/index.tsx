@@ -26,15 +26,21 @@ function RulesTable({ request }: { request: GetRulesRequest }) {
         <TableRow>
           <TableHead>Локация</TableHead>
           <TableHead>Категория</TableHead>
-          <TableHead>Сегмент</TableHead>
-          <TableHead>Цена</TableHead>
-          <TableHead>Действия</TableHead>
+          <TableHead className="text-right" align="right">
+            Матрица
+          </TableHead>
+          <TableHead className="text-right" align="right">
+            Цена
+          </TableHead>
+          <TableHead className="text-right" align="right">
+            Действия
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {data.data.map((it) => (
           <RuleRow
-            key={`${it.location.id}${it.category.id}${it.segment}`}
+            key={`${it.location.id}${it.category.id}${it.matrix_id}`}
             rule={it}
           />
         ))}
@@ -50,9 +56,9 @@ function RulesTableFallback({ nRows }: { nRows: number }) {
         <TableRow>
           <TableHead>Локация</TableHead>
           <TableHead>Категория</TableHead>
-          <TableHead>Сегмент</TableHead>
-          <TableHead>Цена</TableHead>
-          <TableHead>Действия</TableHead>
+          <TableHead align="right">Матрица</TableHead>
+          <TableHead align="right">Цена</TableHead>
+          <TableHead align="right">Действия</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -93,14 +99,14 @@ function RuleRow({ rule }: { rule: Rule }) {
   const { mutate, isPending } = useDeletePriceMutation({
     location_id: rule.location.id,
     category_id: rule.category.id,
-    segment_id: rule.segment
+    matrix_id: rule.matrix_id
   })
 
   function goToRule() {
     navigate({
       to: '/price',
       search: {
-        segment_id: rule.segment,
+        matrix_id: rule.matrix_id,
         location: rule.location,
         category: rule.category
       }
@@ -111,14 +117,16 @@ function RuleRow({ rule }: { rule: Rule }) {
     <TableRow>
       <TableCell>{rule.location.name}</TableCell>
       <TableCell>{rule.category.name}</TableCell>
-      <TableCell>{rule.segment ? rule.segment : 'Baseline'}</TableCell>
-      <TableCell>
+      <TableCell align="right">
+        {rule.matrix_id ? rule.matrix_id : 'Baseline'}
+      </TableCell>
+      <TableCell align="right">
         {new Intl.NumberFormat('ru', {
           style: 'currency',
           currency: 'RUB'
         }).format(rule.price)}
       </TableCell>
-      <TableCell>
+      <TableCell align="right">
         <Button
           variant="outline"
           size="icon"

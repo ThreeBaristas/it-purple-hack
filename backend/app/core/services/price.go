@@ -16,7 +16,7 @@ type PriceService struct {
 type PriceRule struct {
 	Location *models.Location `json:"location"`
 	Category *models.Category `json:"category"`
-	Segment  int64            `json:"segment"`
+	Matrix   int64            `json:"matrix_id"`
 	Price    int64            `json:"price"`
 }
 
@@ -44,23 +44,21 @@ func NewPriceService(
 	}
 }
 
-func (a *PriceService) SetPrice(locationId int64, categoryId int64, segmentsId int64, price int64) (*repository.GetPriceResponse, error) {
-	matrixId, ok := (*a.storage).SegmentToMatrix(segmentsId)
-	if !ok {
-		return nil, errors.New("Segment not found")
-	}
+func (a *PriceService) SetPrice(locationId int64, categoryId int64, matrixId int64, price int64) (*repository.GetPriceResponse, error) {
 	return (*a.priceRepo).SetPrice(locationId, categoryId, matrixId, price)
 }
 
-func (a *PriceService) DeletePrice(locationId int64, categoryId int64, segmentId int64) (bool, error) {
-	matrixId, ok := (*a.storage).SegmentToMatrix(segmentId)
-	if !ok {
-		return false, errors.New("Segment not found")
-	}
+func (a *PriceService) DeletePrice(locationId int64, categoryId int64, matrixId int64) (bool, error) {
 	return (*a.priceRepo).DeletePrice(locationId, categoryId, matrixId)
 }
 
 func (a *PriceService) GetRules(req GetPricesRequest) (*GetRulesResponse, error) {
+	storage, err := (*a.storage).GetStorage()
+	var matrices []int64
+	for _, entry := range storage.Discounts {
+		matrices = append(matrices, entry.MatrixId)
+	}
+
 	res, totalPages, err := (*a.priceRepo).GetRules(req.PageSize, req.Page)
 	if err != nil {
 		return nil, err
@@ -79,7 +77,7 @@ func (a *PriceService) GetRules(req GetPricesRequest) (*GetRulesResponse, error)
 		res1 = append(res1, PriceRule{
 			Location: location,
 			Category: category,
-			Segment:  r.MatrixId,
+			Matrix:   r.MatrixId,
 			Price:    r.Price,
 		})
 	}
@@ -89,7 +87,7 @@ func (a *PriceService) GetRules(req GetPricesRequest) (*GetRulesResponse, error)
 	}, nil
 }
 
-func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds []int64) (*repository.GetPriceResponse, error) {
+func (a *PriceService) GetPrice(locationId int64, categoryId int64, matrices []int64) (*repository.GetPriceResponse, error) {
 	// O(1)
 	location, _ := (*a.locationsRepo).GetLocationByID(locationId)
 	if location == nil {
@@ -120,15 +118,7 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds 
 
 	// O(h_1 + h_2)
 	req := formBatchRequest(locations, categories)
-	var matricesIds []int64
-	for _, value := range segmentsIds {
-		matrixId, ok := (*a.storage).SegmentToMatrix(value)
-		if !ok {
-			return nil, errors.New("Segment not found")
-		}
-		matricesIds = append(matricesIds, matrixId)
-	}
-	req.Matrices = matricesIds
+  req.Matrices =  matrices
 
 	// Response has a length of O(h^2)
 	response, err := (*a.priceRepo).GetPricesBatch(req)
@@ -136,7 +126,6 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, segmentsIds 
 		return nil, err
 	}
 
-	// O(h^2) (!!!)
 	firstGoodNode := a.findFirstNode(locations, categories, response)
 
 	return firstGoodNode, nil
