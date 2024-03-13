@@ -1,5 +1,4 @@
 import { valibotResolver } from '@hookform/resolvers/valibot'
-import { queryOptions } from '@tanstack/react-query'
 import { createRoute } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import {
@@ -14,7 +13,6 @@ import {
 
 import { SelectCategory } from '@/entities/category'
 import { SelectLocation } from '@/entities/location'
-import { getPrice } from '@/shared/api'
 import {
   Button,
   Card,
@@ -26,6 +24,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel
@@ -43,7 +42,7 @@ const locationSchema = object({
 export const priceFormSchema = object({
   location: locationSchema,
   category: locationSchema,
-  segment_id: coerce(number(), Number),
+  matrix_id: coerce(number(), Number),
   price: coerce(number(), Number)
 })
 
@@ -60,17 +59,17 @@ export const priceRoute = createRoute({
   loader: ({ context: { queryClient }, deps }) => {
     const categoryId = deps.search.category?.id
     const locationId = deps.search.location?.id
-    const segment = deps.search.segment_id
+    const matrix = deps.search.matrix_id
     if (
       categoryId != undefined &&
       locationId != undefined &&
-      segment != undefined
+      matrix != undefined
     ) {
       return queryClient.ensureQueryData(
         getPriceQueryOptions({
           category_id: categoryId,
           location_id: locationId,
-          segment_id: segment
+          matrix_id: matrix
         })
       )
     }
@@ -95,7 +94,7 @@ export function PriceRouteComponent() {
       location_id: values.location.id,
       category_id: values.category.id,
       price: values.price,
-      segment_id: values.segment_id
+      matrix_id: values.matrix_id
     })
   }
 
@@ -138,10 +137,10 @@ export function PriceRouteComponent() {
               />
               <FormField
                 control={form.control}
-                name="segment_id"
+                name="matrix_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Сегмент</FormLabel>
+                    <FormLabel>Матрица</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>

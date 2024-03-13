@@ -5,7 +5,7 @@ import { axiosInstance } from './axios'
 export type DeletePriceRequest = {
   location_id: number
   category_id: number
-  segment_id: number
+  matrix_id: number
 }
 
 export async function deletePriceRule(req: DeletePriceRequest) {

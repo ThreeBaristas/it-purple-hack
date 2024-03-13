@@ -15,7 +15,7 @@ type IdAndName = {
 type RuleDTO = {
   location: IdAndName
   category: IdAndName
-  segment: number
+  matrix_id: number
   price: number
 }
 

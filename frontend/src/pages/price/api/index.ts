@@ -17,7 +17,7 @@ export const getPriceQueryOptions = (req: GetPriceRequest) =>
 type SaveReq = {
   location_id: number
   category_id: number
-  segment_id: number
+  matrix_id: number
   price: number
 }
 
