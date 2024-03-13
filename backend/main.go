@@ -31,7 +31,7 @@ func main() {
 	if err != nil {
 		logger.Fatal("Could not initialize db connection", zap.Error(err))
 	}
-  db.SetMaxOpenConns(16)
+  db.SetMaxOpenConns(64)
 
 	cR := repository.NewCategoriesRepositoryImpl()
 	lR := repository.NewLocationsRepositoryImpl()

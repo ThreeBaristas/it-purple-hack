@@ -18,6 +18,10 @@ services:
       - "3000:3000"
     environment:
       DB_HOST: "postgres"
+      GENERATE_STORAGE: "FALSE"
+      GENERATE_RULES: "FALSE"
+    restart:
+      "always"
   frontend:
     build:
       context: frontend/

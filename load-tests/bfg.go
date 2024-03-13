@@ -109,11 +109,13 @@ func NewCustomTargeter() vegeta.Targeter {
 }
 
 func main() {
-  rate := vegeta.Rate { Freq: 800, Per: time.Second }
+  rps := 2000
+  rate := vegeta.Rate { Freq: rps, Per: time.Second }
   duration := time.Second * 60
   targeter := NewCustomTargeter()
   attacker := vegeta.NewAttacker()
 
+  fmt.Printf("starting load test with RPS = %d\n", rps)
   var metrics vegeta.Metrics
   for res := range attacker.Attack(targeter, rate, duration, "Big Bang!") {
     metrics.Add(res)
@@ -121,4 +123,7 @@ func main() {
   metrics.Close()
 
   fmt.Printf("99th percentile: %s\n", metrics.Latencies.P99)
+  fmt.Printf("Mean latency: %s\n", metrics.Latencies.Mean)
+  fmt.Printf("50th percentile: %s\n", metrics.Latencies.P50)
+  fmt.Printf("Total requests: %d\n", metrics.Requests)
 }
