@@ -2,11 +2,13 @@ package controllers
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"threebaristas.com/purple/app/core/services"
 	"threebaristas.com/purple/app/repository"
+	"threebaristas.com/purple/pkg/metrics"
 )
 
 type PriceController struct {
@@ -27,6 +29,12 @@ func NewPriceController(
 	}
 }
 
+
+func recordRequestDuration(start time.Time) {
+  duration := time.Since(start)
+  metrics.TimeToProcessGetPrice.Observe(float64(duration / time.Millisecond))
+}
+
 // GetPrice func gets a price for given category_id & location_id & user_id
 //
 //	@Tags		admin
@@ -34,6 +42,9 @@ func NewPriceController(
 func (a *PriceController) GetPrice(c *fiber.Ctx) error {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
+
+  startTime := time.Now()
+  defer recordRequestDuration(startTime)
 	categoryId, err := strconv.ParseInt(c.Query("category_id", "NULL"), 10, 64)
 
 	if err != nil {
