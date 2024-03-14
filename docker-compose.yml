@@ -9,6 +9,7 @@ services:
     ports:
       - "5432:5432"
   backend:
+    image: fegor04/it-purple-hack-back
     build:
       target: purple
       context: backend/
@@ -23,6 +24,7 @@ services:
     restart:
       "always"
   frontend:
+    image: fegor04/it-purple-hack-front
     build:
       context: frontend/
     depends_on:
