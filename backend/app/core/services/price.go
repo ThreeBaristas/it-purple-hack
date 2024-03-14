@@ -126,7 +126,7 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, matrices []i
 
 	// O(h_1 + h_2)
 	req := formBatchRequest(locations, categories)
-  req.Matrices =  matrices
+	req.Matrices = matrices
 
 	// Response has a length of O(h^2)
 	response, err := (*a.priceRepo).GetPricesBatch(req)
@@ -135,11 +135,11 @@ func (a *PriceService) GetPrice(locationId int64, categoryId int64, matrices []i
 	}
 
 	firstGoodNode := a.findFirstNode(locations, categories, response)
-  if matrixToSegment != nil {
-    sort.Slice(response, func(i, j int) bool {
-      return (*matrixToSegment)[response[i].MatrixId] > (*matrixToSegment)[response[j].MatrixId]
-    })
-  }
+	if matrixToSegment != nil {
+		sort.Slice(response, func(i, j int) bool {
+			return (*matrixToSegment)[response[i].MatrixId] > (*matrixToSegment)[response[j].MatrixId]
+		})
+	}
 
 	return firstGoodNode, nil
 }
@@ -206,23 +206,24 @@ func findInResponse(location *models.Location, category *models.Category, respon
 }
 
 func (p *PriceService) GenerateRules() {
-  var wg sync.WaitGroup
+	var wg sync.WaitGroup
 
-  const step = 10
-  for i := 0; i < len(p.locationsRepo.AsList); i += step {
-    for j := 0; j < len(p.categoriesRepo.AsList); j += step {
-      wg.Add(1)
-      var matrixId int64
-      matrixId = int64(rand.Intn(200))
+	const step = 10
+	for i := 0; i < len(p.locationsRepo.AsList); i += step {
+		for j := 0; j < len(p.categoriesRepo.AsList); j += step {
+			wg.Add(1)
+			var matrixId int64
+			matrixId = int64(rand.Intn(200))
 
-      locationId := p.locationsRepo.AsList[i].ID
-      categoryId := p.categoriesRepo.AsList[j].ID
-      price := rand.Intn(5000)
-      go func() { p.SetPrice(locationId, categoryId, matrixId, int64(price))
-      wg.Done()
-    }()
-    }
-  }
+			locationId := p.locationsRepo.AsList[i].ID
+			categoryId := p.categoriesRepo.AsList[j].ID
+			price := rand.Intn(5000)
+			go func() {
+				p.SetPrice(locationId, categoryId, matrixId, int64(price))
+				wg.Done()
+			}()
+		}
+	}
 
-  wg.Wait()
+	wg.Wait()
 }

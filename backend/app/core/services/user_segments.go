@@ -10,13 +10,13 @@ type GetUserSegmentsService struct {
 }
 
 func randomArray() []int64 {
-  return []int64{
-    int64(rand.Intn(200) + 1),
-    int64(rand.Intn(200) + 1),
-    int64(rand.Intn(200) + 1),
-    int64(rand.Intn(200) + 1),
-    int64(rand.Intn(200) + 1),
-  }
+	return []int64{
+		int64(rand.Intn(200) + 1),
+		int64(rand.Intn(200) + 1),
+		int64(rand.Intn(200) + 1),
+		int64(rand.Intn(200) + 1),
+		int64(rand.Intn(200) + 1),
+	}
 }
 
 var db = map[int64][]int64{

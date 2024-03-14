@@ -29,10 +29,9 @@ func NewPriceController(
 	}
 }
 
-
 func recordRequestDuration(start time.Time) {
-  duration := time.Since(start)
-  metrics.TimeToProcessGetPrice.Observe(float64(duration / time.Millisecond))
+	duration := time.Since(start)
+	metrics.TimeToProcessGetPrice.Observe(float64(duration / time.Millisecond))
 }
 
 // GetPrice func gets a price for given category_id & location_id & user_id
@@ -43,8 +42,8 @@ func (a *PriceController) GetPrice(c *fiber.Ctx) error {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 
-  startTime := time.Now()
-  defer recordRequestDuration(startTime)
+	startTime := time.Now()
+	defer recordRequestDuration(startTime)
 	categoryId, err := strconv.ParseInt(c.Query("category_id", "NULL"), 10, 64)
 
 	if err != nil {
@@ -74,14 +73,14 @@ func (a *PriceController) GetPrice(c *fiber.Ctx) error {
 		return c.SendString("Error. could not get segments" + err.Error())
 	}
 
-  var matrixToSegment map[int64]int64 = make(map[int64]int64)
+	var matrixToSegment map[int64]int64 = make(map[int64]int64)
 	var matrices []int64
 	for _, segment := range segments {
 		value, ok := (*a.mapper).SegmentToMatrix(segment)
 		if !ok {
 			logger.Warn("Matrix for segment does not exits", zap.Int64("segment_id", segment))
 		} else {
-      matrixToSegment[value] = segment
+			matrixToSegment[value] = segment
 			matrices = append(matrices, value)
 		}
 	}
